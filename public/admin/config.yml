@@ -1,0 +1,175 @@
+# Meridian yönetim paneli (Sveltia CMS).
+# __REPO__, __SITE_URL__ ve __BASE__ derleme sırasında otomatik doldurulur.
+
+backend:
+  name: github
+  repo: __REPO__
+  branch: main
+  commit_messages:
+    create: 'Yeni haber: {{slug}}'
+    update: 'Haber güncellendi: {{slug}}'
+    delete: 'Haber silindi: {{slug}}'
+    uploadMedia: 'Görsel yüklendi: {{path}}'
+    deleteMedia: 'Görsel silindi: {{path}}'
+
+site_url: __SITE_URL__
+display_url: __SITE_URL__
+locale: tr
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: articles
+    label: Haberler
+    label_singular: Haber
+    folder: content/articles
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    identifier_field: title
+    summary: '{{title}} · {{language}} · {{status}}'
+    sortable_fields:
+      fields: [publishedAt, title, status]
+      default:
+        field: publishedAt
+        direction: descending
+    view_filters:
+      - label: Taslaklar
+        field: status
+        pattern: draft
+      - label: Yayında
+        field: status
+        pattern: published
+      - label: Arşiv
+        field: status
+        pattern: archived
+      - label: Türkçe
+        field: language
+        pattern: tr
+      - label: English
+        field: language
+        pattern: en
+    fields:
+      - label: '1. Başlık'
+        name: title
+        widget: string
+
+      - label: '2. Spot'
+        name: spot
+        widget: text
+        hint: Başlığın altında ve listelerde görünen bir iki cümlelik giriş.
+
+      - label: '3. Haber metni'
+        name: body
+        widget: markdown
+
+      - label: '4. Bölüm'
+        name: section
+        widget: select
+        default: world
+        options:
+          - { label: 'Dünya / World', value: world }
+          - { label: 'Siyaset / Politics', value: politics }
+          - { label: 'Ekonomi / Business', value: business }
+          - { label: 'Bilim / Science', value: science }
+          - { label: 'Teknoloji / Technology', value: technology }
+          - { label: 'Sağlık / Health', value: health }
+          - { label: 'Kültür / Culture', value: culture }
+
+      - label: '5. Dil'
+        name: language
+        widget: select
+        default: tr
+        options:
+          - { label: Türkçe, value: tr }
+          - { label: English, value: en }
+
+      - label: '6. Kaynaklar'
+        name: sources
+        widget: list
+        required: false
+        hint: Haberin dayandığı her kaynak için bir satır. Sayfanın altında numaralı liste olarak çıkar.
+        summary: '{{fields.title}}'
+        fields:
+          - { label: 'Kaynak adı', name: title, widget: string }
+          - { label: 'Bağlantı', name: url, widget: string, required: false }
+
+      - label: '7. Kapak görseli'
+        name: cover
+        widget: image
+        required: false
+
+      - label: 'Görselin açıklaması (görme engelliler ve yapay zekâlar için)'
+        name: imageAlt
+        widget: string
+        required: false
+
+      - label: 'Görsel altyazısı (ressam, eser, yıl)'
+        name: imageCaption
+        widget: string
+        required: false
+        hint: 'Örnek: Ivan Aivazovsky, Dokuzuncu Dalga, 1850'
+
+      - label: '8. Manşete çek'
+        name: headline
+        widget: boolean
+        default: false
+        hint: Birden fazla haber işaretliyse en yenisi manşette durur.
+
+      - label: 'Editörün seçtikleri'
+        name: editorsPick
+        widget: boolean
+        default: false
+
+      - label: 'Son dakika (üstteki banda düşer, 48 saat kalır)'
+        name: breaking
+        widget: boolean
+        default: false
+
+      - label: '9. Durum'
+        name: status
+        widget: select
+        default: draft
+        options:
+          - { label: Taslak, value: draft }
+          - { label: Yayında, value: published }
+          - { label: 'Arşiv (ön sayfadan kalkar, bağlantısı çalışır)', value: archived }
+
+      - label: '10. Yayın zamanı'
+        name: publishedAt
+        widget: datetime
+        hint: İleri bir tarih seçersen haber o saat geldiğinde kendiliğinden yayına girer (en geç bir saat içinde).
+
+      - label: Yazar
+        name: author
+        widget: string
+        required: false
+
+      - label: Şehir
+        name: location
+        widget: string
+        required: false
+
+      - label: Etiketler
+        name: tags
+        widget: list
+        required: false
+
+      - label: 'Kalıcı bağlantı adı (boş bırakılabilir)'
+        name: slug
+        widget: string
+        required: false
+        hint: Boşsa dosya adından üretilir. Yayına çıktıktan sonra değiştirme; eski bağlantılar kırılır.
+
+      - label: Güncellenme zamanı
+        name: updatedAt
+        widget: datetime
+        required: false
+        hint: Haberde önemli bir düzeltme yaptıysan doldur; sayfada "Güncellendi" olarak görünür.
