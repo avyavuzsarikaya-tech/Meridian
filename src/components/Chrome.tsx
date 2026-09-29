@@ -4,7 +4,7 @@ import { LANGS, LANGUAGE_NAMES, SECTIONS, T, feedPath, homePath, fmtLongDate, fm
 import type { Article } from '../content';
 
 const FONTS =
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Rubik:wght@400;500;600;700&display=swap';
+  'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap';
 
 export function Document({
   lang,
@@ -26,7 +26,7 @@ export function Document({
   jsonLd?: object;
   alternates?: { lang: Lang; path: string }[];
   noindex?: boolean;
-  /** Noktalı kâğıt dokusu yalnız ön sayfada; okuma sayfalarında düz zemin. */
+  /** Kept for compatibility with the existing page renderer. */
   grain?: boolean;
   children: ReactNode;
 }) {
@@ -53,15 +53,15 @@ export function Document({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="stylesheet" href={FONTS} />
-        <link rel="stylesheet" href={url('/assets/site.css')} />
+        <link rel="stylesheet" href={`${url('/assets/site.css')}?v=20260929-editorial`} />
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         {jsonLd ? (
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         ) : null}
       </head>
-      <body className={grain ? 'grain' : undefined}>
+      <body>
         {children}
-        <script src={url('/assets/site.js')} defer />
+        <script src={`${url('/assets/site.js')}?v=20260929-editorial`} defer />
       </body>
     </html>
   );
@@ -97,8 +97,12 @@ export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath:
 
 export function Logo({ className = '' }: { className?: string }) {
   return (
-    <span className={className} lang="en" dir="ltr">
-      Meri<span className="text-[hsl(var(--accent))]">d</span>ian
+    <span className={`brand-lockup ${className}`} lang="en" dir="ltr">
+      <svg className="brand-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <circle cx="22" cy="22" r="19" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M22 3v38M3 22h38M22 3c-7 6-10 12-10 19s3 13 10 19M22 3c7 6 10 12 10 19s-3 13-10 19" stroke="currentColor" strokeWidth="1.25" />
+      </svg>
+      <span className="brand-wordmark">MERIDIAN</span>
     </span>
   );
 }
@@ -107,31 +111,12 @@ export function Masthead({ lang, compact = false }: { lang: Lang; compact?: bool
   const t = T[lang];
   const home = homePath(lang);
   return (
-    <header className="relative overflow-hidden">
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox="0 0 1200 220"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        <g fill="none" stroke="hsl(220 9% 14% / 0.12)" strokeWidth="1">
-          <ellipse cx="600" cy="240" rx="620" ry="300" />
-          <ellipse cx="600" cy="240" rx="460" ry="300" />
-          <ellipse cx="600" cy="240" rx="300" ry="300" />
-          <ellipse cx="600" cy="240" rx="140" ry="300" />
-        </g>
-        <g fill="none" stroke="hsl(16 100% 48% / 0.35)" strokeWidth="1">
-          <ellipse cx="600" cy="240" rx="540" ry="300" />
-          <ellipse cx="600" cy="240" rx="220" ry="300" />
-        </g>
-        <circle cx="600" cy="40" r="3.5" fill="hsl(16 100% 48%)" />
-      </svg>
-
-      <div className={`relative mx-auto max-w-7xl px-4 text-center sm:px-6 ${compact ? 'pb-4 pt-6 sm:pt-8' : 'pb-6 pt-10 sm:pt-14'}`}>
+    <header className="masthead">
+      <div className={`mx-auto max-w-7xl px-4 text-center sm:px-6 ${compact ? 'py-5 sm:py-6' : 'py-7 sm:py-9'}`}>
         <a href={url(home)} className="inline-block" aria-label={`Meridian — ${t.home}`}>
           <span
-            className="block font-serif-display font-black uppercase leading-none tracking-tight text-[hsl(var(--ink))]"
-            style={{ fontSize: compact ? 'clamp(2.4rem, 6vw, 4.25rem)' : 'clamp(3.2rem, 11vw, 9rem)' }}
+            className="block font-serif-display leading-none text-[hsl(var(--ink))]"
+            style={{ fontSize: compact ? 'clamp(2.15rem, 5vw, 3.2rem)' : 'clamp(2.5rem, 7.5vw, 5.6rem)' }}
           >
             <Logo />
           </span>
@@ -144,25 +129,21 @@ export function Masthead({ lang, compact = false }: { lang: Lang; compact?: bool
 export function NavBar({ lang, active, sections }: { lang: Lang; active?: string; sections: typeof SECTIONS }) {
   const t = T[lang];
   return (
-    <nav className="site-nav sticky top-0 z-40 border-b hairline-b bg-[hsl(var(--paper)/0.94)] backdrop-blur-sm" aria-label={t.sections}>
+    <nav className="site-nav relative z-40 border-y border-[hsl(var(--ink))] bg-[hsl(var(--paper))]" aria-label={t.sections}>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:justify-start">
         <a
           href={url(homePath(lang))}
-          className="kicker shrink-0 border-r border-[hsl(var(--rule))] py-1 pl-0 pr-4 text-[hsl(var(--ink))] transition-colors hover:text-[hsl(var(--accent))]"
+          className="nav-link kicker shrink-0 py-3 pe-5 text-[hsl(var(--ink))]"
         >
           {t.home}
         </a>
-        <div className="hidden items-center gap-1 py-3 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           {sections.map((s) => (
             <a
               key={s.slug}
               href={url(`/${lang}/section/${s.slug}/`)}
               aria-current={active === s.slug ? 'page' : undefined}
-              className={`kicker whitespace-nowrap px-3 py-1 transition-colors ${
-                active === s.slug
-                  ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]'
-                  : 'text-[hsl(var(--body))] hover:text-[hsl(var(--accent))]'
-              }`}
+              className="nav-link kicker whitespace-nowrap py-3 text-[hsl(var(--ink))]"
             >
               {s[lang]}
             </a>
@@ -192,13 +173,13 @@ export function Footer({ lang, sections }: { lang: Lang; sections: typeof SECTIO
   const t = T[lang];
   const year = new Date().getUTCFullYear();
   return (
-    <footer className="mt-10 border-t-2 ink-rule">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
+    <footer className="mt-12 border-t border-[hsl(var(--ink))]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 sm:px-6 md:grid-cols-3">
         <div className="md:col-span-2">
-          <a href={url(homePath(lang))} className="font-serif-display text-4xl font-black uppercase tracking-tight">
+          <a href={url(homePath(lang))} className="footer-brand font-serif-display text-3xl">
             <Logo />
           </a>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-[hsl(var(--body))]">{t.about}</p>
+          <p className="mt-3 max-w-sm text-base leading-relaxed text-[hsl(var(--body))]">{t.about}</p>
         </div>
         <div>
           <p className="kicker mb-4 text-[hsl(var(--muted))]">{t.sections}</p>

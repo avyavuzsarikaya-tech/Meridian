@@ -26,47 +26,42 @@ export function Home({ lang, list }: { lang: Lang; list: Article[] }) {
 
   return (
     <>
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
-        <div className={`grid gap-10 ${picks.length ? 'lg:grid-cols-3' : ''}`}>
-          <article className="group lg:col-span-2">
+      <section className="front-page mx-auto max-w-7xl px-4 pt-8 pb-12 sm:px-6 sm:pt-11 sm:pb-16">
+        <div className="front-heading kicker"><span>{t.latest}</span><span>MERIDIAN</span></div>
+        <div className={`front-grid ${picks.length ? 'has-picks' : ''}`}>
+          <article className="lead-story group">
             <a href={url(lead.path)} className="block">
+              <span className="kicker story-section">{sectionName(lead.section, lang)}</span>
               {lead.cover ? (
-                <div className="relative overflow-hidden">
+                <div className="mt-4 overflow-hidden">
                   <Cover a={lead} priority className="news-img aspect-[3/2] w-full object-cover" />
-                  <span className="kicker absolute left-0 top-0 bg-[hsl(var(--accent))] px-3 py-1.5 text-[hsl(var(--cream))]">
-                    {sectionName(lead.section, lang)}
-                  </span>
                 </div>
-              ) : (
-                <span className="kicker inline-block bg-[hsl(var(--accent))] px-3 py-1.5 text-[hsl(var(--cream))]">
-                  {sectionName(lead.section, lang)}
-                </span>
-              )}
-              <h2 className="mt-5 max-w-3xl font-serif-display text-4xl font-bold leading-[1.08] tracking-tight text-balance sm:text-5xl lg:text-6xl">
+              ) : null}
+              <h2 className="mt-4 max-w-3xl font-serif-display font-bold leading-[1.04] text-balance">
                 <span className="headline-link">{lead.title}</span>
               </h2>
             </a>
             {lead.spot && (
-              <p className="mt-4 max-w-2xl font-serif-display text-lg leading-relaxed text-[hsl(var(--body))]">{lead.spot}</p>
+              <p className="lead-deck mt-4 max-w-2xl font-serif-display leading-relaxed text-[hsl(var(--body))]">{lead.spot}</p>
             )}
-            <div className="mt-4">
+            <div className="mt-6">
               <Byline a={lead} lang={lang} />
             </div>
           </article>
 
           {picks.length > 0 && (
-            <aside className="border-t-2 ink-rule lg:border-l lg:border-t-2 lg:pl-8 lg:pt-0">
-              <p className="kicker pt-4 text-[hsl(var(--accent))] lg:pt-4">{t.editorsPicks}</p>
-              <ol className="mt-2 divide-y divide-[hsl(var(--rule))]">
+            <aside className="editor-picks">
+              <p className="kicker">{t.editorsPicks}</p>
+              <ol className="mt-3 divide-y divide-[hsl(var(--rule))]">
                 {picks.map((a, i) => (
-                  <li key={a.path} className="group py-5">
-                    <a href={url(a.path)} className="flex gap-4">
-                      <span className="font-serif-display text-3xl font-bold leading-none text-[hsl(var(--rule))] transition-colors group-hover:text-[hsl(var(--accent))]">
+                  <li key={a.path} className="group py-5 first:pt-3">
+                    <a href={url(a.path)} className="flex gap-5">
+                      <span className="pick-number font-serif-display leading-none" aria-hidden="true">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <div>
-                        <p className="kicker mb-1.5 text-[hsl(var(--muted))]">{sectionName(a.section, lang)}</p>
-                        <h3 className="font-serif-display text-xl font-semibold leading-snug text-balance">
+                        <p className="kicker mb-2 text-[hsl(var(--muted))]">{sectionName(a.section, lang)}</p>
+                        <h3 className="font-serif-display text-2xl font-semibold leading-tight text-balance">
                           <span className="headline-link">{a.title}</span>
                         </h3>
                         <div className="mt-2"><Byline a={a} lang={lang} /></div>
@@ -96,7 +91,7 @@ export function Card({ a, lang, delay = 0 }: { a: Article; lang: Lang; delay?: n
             </span>
           </div>
         )}
-        {!a.cover && <p className="kicker mb-2 text-[hsl(var(--accent))]">{sectionName(a.section, lang)}</p>}
+        {!a.cover && <p className="kicker mb-2 text-[hsl(var(--ink))]">{sectionName(a.section, lang)}</p>}
         <h3 className="font-serif-display text-2xl font-semibold leading-snug text-balance">
           <span className="headline-link">{a.title}</span>
         </h3>
