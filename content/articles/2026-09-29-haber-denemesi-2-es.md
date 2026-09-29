@@ -3,7 +3,10 @@ title: Noticia de prueba 2
 spot: Contenido de prueba. No es una noticia real.
 section: world
 language: es
-slug: haber-denemesi-2
+slug: noticia-de-prueba-2
+translationKey: demo-2
+legacySlugs:
+  - haber-denemesi-2
 status: published
 publishedAt: 2026-09-29T00:01:00Z
 author: Meridian

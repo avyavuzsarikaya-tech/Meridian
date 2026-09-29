@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { url, absUrl, SITE_NAME } from '../config';
-import { LANGS, LANGUAGE_NAMES, SECTIONS, T, feedPath, homePath, fmtLongDate, fmtClock, type Lang } from '../i18n';
+import { LANGS, LANGUAGE_NAMES, SECTIONS, T, feedPath, homePath, fmtLongDate, fmtShortDate, fmtClock, type Lang } from '../i18n';
 import type { Article } from '../content';
 
 const FONTS =
@@ -69,20 +69,29 @@ export function Document({
 
 export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath: Record<Lang, string> }) {
   return (
-    <div className="border-b hairline-b">
+    <div className="relative z-50 border-b hairline-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
         <div className="flex items-center gap-3 font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))]">
           <span className="hidden sm:inline" data-date={lang}>{fmtLongDate(now, lang)}</span>
           <span className="hidden h-3 w-px bg-[hsl(var(--rule))] sm:inline-block" />
           <span data-clock>{fmtClock(now)} GMT</span>
         </div>
-        <nav aria-label={T[lang].edition} className="flex flex-wrap items-center justify-end gap-1">
-          {LANGS.map((edition) => (
-            <a key={edition} href={url(altPath[edition])} hrefLang={edition} lang={edition}
-              aria-current={lang === edition ? 'page' : undefined}
-              className={`kicker whitespace-nowrap px-2 py-1 transition-colors ${lang === edition ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]' : 'text-[hsl(var(--body))] hover:text-[hsl(var(--accent))]'}`}
-            >{LANGUAGE_NAMES[edition]}</a>
-          ))}
+        <nav aria-label={T[lang].languageSelection}>
+          <details className="relative group">
+            <summary className="flex cursor-pointer list-none items-center gap-2 border border-[hsl(var(--rule))] px-3 py-1.5 text-[11px] font-semibold text-[hsl(var(--body))] hover:border-[hsl(var(--ink))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>{T[lang].languageSelection}</span>
+              <span className="text-[hsl(var(--muted))]">· {LANGUAGE_NAMES[lang]}</span>
+              <span aria-hidden="true">▾</span>
+            </summary>
+            <div className="absolute top-full z-50 mt-1 min-w-full border border-[hsl(var(--rule))] bg-[hsl(var(--paper))] p-1 shadow-lg" style={{ insetInlineEnd: 0 }}>
+              {LANGS.map((edition) => (
+                <a key={edition} href={url(altPath[edition])} hrefLang={edition} lang={edition}
+                  aria-current={lang === edition ? 'page' : undefined}
+                  className={`block whitespace-nowrap px-3 py-2 text-sm transition-colors ${lang === edition ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]' : 'text-[hsl(var(--body))] hover:bg-[hsl(var(--rule))]'}`}
+                >{LANGUAGE_NAMES[edition]}</a>
+              ))}
+            </div>
+          </details>
         </nav>
       </div>
     </div>
@@ -225,7 +234,7 @@ export function Footer({ lang }: { lang: Lang }) {
           <span lang="en">© {year} Meridian</span>
           <span className="flex items-center gap-4">
             <a href={url(feedPath(lang))} className="hover:text-[hsl(var(--accent))]">{t.feed}</a>
-            <span lang="en">0° Longitude · Everywhere</span>
+            <span className="normal-case">{t.footerMotto}</span>
           </span>
         </div>
       </div>
@@ -253,7 +262,7 @@ export function Byline({ a, lang, withTime = true }: { a: Article; lang: Lang; w
       {withTime ? (
         <>
           {' — '}
-          <time dateTime={a.publishedAt.toISOString()}>{stampShort(a, lang)}</time>
+          <time className="normal-case" dateTime={a.publishedAt.toISOString()}>{stampShort(a, lang)}</time>
         </>
       ) : null}{' '}
       · {a.readMinutes} {t.minRead}
@@ -262,7 +271,7 @@ export function Byline({ a, lang, withTime = true }: { a: Article; lang: Lang; w
 }
 
 function stampShort(a: Article, lang: Lang) {
-  return `${a.publishedAt.toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })}, ${fmtClock(a.publishedAt)} GMT`;
+  return `${fmtShortDate(a.publishedAt, lang)}, ${fmtClock(a.publishedAt)} GMT`;
 }
 
 export function Cover({ a, className, priority = false }: { a: Article; className: string; priority?: boolean }) {

@@ -4,6 +4,7 @@ spot: Deneme içeriği. Gerçek haber değildir.
 section: world
 language: tr
 slug: haber-denemesi-2
+translationKey: demo-2
 status: published
 publishedAt: 2026-09-29T00:01:00Z
 author: Meridian

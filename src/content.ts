@@ -10,6 +10,8 @@ export type Source = { title: string; url?: string };
 export type Article = {
   file: string;
   slug: string;
+  translationKey?: string;
+  legacySlugs: string[];
   lang: Lang;
   title: string;
   spot: string;
@@ -92,7 +94,7 @@ export function slugify(s: string) {
     .replace(/[ûù]/g, 'u')
     .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 100);
 }
@@ -151,6 +153,9 @@ export function loadArticles(): LoadResult {
     // değişse de adres değişmesin diye başlıktan türetilmez.
     const fromFile = file.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
     const slug = slugify(String(data.slug || '')) || slugify(fromFile) || slugify(title);
+    const legacySlugs = Array.isArray(data.legacySlugs)
+      ? data.legacySlugs.map((v: unknown) => slugify(String(v))).filter(Boolean)
+      : [];
     const publishedAt = toDate(data.publishedAt) ?? fs.statSync(path.join(CONTENT_DIR, file)).mtime;
     const bodyText = content.trim();
     const sources = toSources(data.sources);
@@ -168,6 +173,8 @@ export function loadArticles(): LoadResult {
     out.push({
       file,
       slug,
+      translationKey: data.translationKey ? String(data.translationKey).trim() : undefined,
+      legacySlugs,
       lang,
       title,
       spot: String(data.spot ?? '').trim(),

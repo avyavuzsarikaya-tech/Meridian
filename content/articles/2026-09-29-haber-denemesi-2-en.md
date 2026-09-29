@@ -3,7 +3,10 @@ title: News Test 2
 spot: Test entry. This is not a news report.
 section: world
 language: en
-slug: haber-denemesi-2
+slug: news-test-2
+translationKey: demo-2
+legacySlugs:
+  - haber-denemesi-2
 status: published
 publishedAt: 2026-09-29T00:01:00Z
 author: Meridian

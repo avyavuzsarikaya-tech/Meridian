@@ -3,7 +3,10 @@ title: Article de test 1
 spot: Contenu de démonstration. Il ne s'agit pas d'une véritable actualité.
 section: world
 language: fr
-slug: haber-denemesi-1
+slug: article-de-test-1
+translationKey: demo-1
+legacySlugs:
+  - haber-denemesi-1
 status: published
 publishedAt: 2026-09-29T00:00:00Z
 author: Meridian

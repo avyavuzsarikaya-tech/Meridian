@@ -180,7 +180,19 @@ collections:
         name: slug
         widget: string
         required: false
-        hint: Boşsa dosya adından üretilir. Yayına çıktıktan sonra değiştirme; eski bağlantılar kırılır.
+        hint: Boşsa dosya adından üretilir. Haberin dilindeki kısa adresi yaz; değiştireceksen önceki değeri Eski adresler alanına ekle.
+
+      - label: 'Çeviri eşleştirme anahtarı (isteğe bağlı)'
+        name: translationKey
+        widget: string
+        required: false
+        hint: Aynı haberin beş dildeki sürümüne aynı değeri yaz. Böylece dil seçimi o haberin çevirisine gider.
+
+      - label: 'Eski adresler (isteğe bağlı)'
+        name: legacySlugs
+        widget: list
+        required: false
+        hint: Adres değişirse eski kısa adresi buraya ekle; eski bağlantı yenisine yönlenir. Örnek haber-denemesi-1.
 
       - label: Güncellenme zamanı
         name: updatedAt

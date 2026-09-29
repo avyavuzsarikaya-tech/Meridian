@@ -120,7 +120,7 @@ for (const a of live) {
     <Shell
       lang={a.lang}
       pagePath={a.path}
-      alt={languagePaths((lang) => live.find((other) => other.lang === lang && other.slug === a.slug)?.path ?? homePath(lang))}
+      alt={languagePaths((lang) => live.find((other) => other.lang === lang && (a.translationKey ? other.translationKey === a.translationKey : other.slug === a.slug))?.path ?? homePath(lang))}
       compact
       activeSection={a.section}
       title={`${a.title} | ${SITE_NAME}`}
@@ -131,6 +131,20 @@ for (const a of live) {
       <ArticlePage a={a} related={related} />
     </Shell>,
   );
+}
+
+// Değişen adresler için eski bağlantılar çalışmaya devam eder.
+const occupiedPaths = new Set(live.map((a) => a.path));
+for (const a of live) {
+  for (const slug of a.legacySlugs) {
+    const oldPath = `/${a.lang}/${slug}/`;
+    if (oldPath === a.path || occupiedPaths.has(oldPath)) {
+      console.warn(`uyarı: ${a.file}: eski adres ${oldPath} başka bir haberle çakışıyor`);
+      continue;
+    }
+    occupiedPaths.add(oldPath);
+    write(oldPath.slice(1) + 'index.html', redirect(a.path));
+  }
 }
 
 // ---------- bölüm sayfaları ----------

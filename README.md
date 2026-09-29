@@ -8,6 +8,7 @@ Bağımsız, küresel haber sitesi. Tasarım (gri zemin dahil) Kimi'nin Meridian
 - Siteye her değişiklikte (ve her saat başı) GitHub kendiliğinden yeni hâlini yayınlar.
 - Her sayfa hazır HTML olarak üretilir; JavaScript çalıştırmayan okuyucular ve yapay zekâlar da bütün metni görür.
 - Türkçe, İngilizce, Arapça, Fransızca ve İspanyolca yayınlar ayrı adreslerde açılır. Arapça sağdan sola okunur.
+- Üstteki "Dil seçimi" kutusu aynı haberin başka dildeki sürümünü açar; çevirisi yoksa o dilin ön sayfasına gider.
 - Haber sayfasındaki `A− / A / A+` düğmeleri metin boyutunu değiştirir; tercih aynı tarayıcıda hatırlanır.
 
 ## Haber eklemek
@@ -28,6 +29,8 @@ Haber metninde ilgili cümlenin sonuna `[^1]` yaz. Kaynaklar alanındaki ilk sat
 - `/tr/<haber-adi>/` haber sayfası
 - `/tr/section/<bolum>/` bölüm sayfası
 - `/feed.xml`, `/tr/feed.xml` RSS; `/sitemap.xml`; `/llms.txt` yapay zekâlar için özet liste
+
+Haberin adresi kendi dilinde olmalı. Yönetim panelindeki "Kalıcı bağlantı adı" alanına o dilde bir kısa ad gir. Bir haberin çevirilerini bağlamak için "Çeviri eşleştirme anahtarı" alanına hepsinde aynı değeri yaz. Adresi daha sonra değiştirirsen eski kısa adı "Eski adresler" listesine ekle; eski bağlantılar yeni adrese yönlenir.
 
 ## Yerelde derlemek
 

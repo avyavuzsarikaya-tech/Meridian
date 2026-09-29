@@ -49,6 +49,8 @@ export const T = {
     home: 'Home',
     feed: 'RSS',
     readingSize: 'Text size',
+    languageSelection: 'Choose language',
+    footerMotto: '0° Longitude · Everywhere',
   },
   tr: {
     tagline: 'Dünya, bütünüyle.',
@@ -79,6 +81,8 @@ export const T = {
     home: 'Ana Sayfa',
     feed: 'RSS',
     readingSize: 'Yazı boyutu',
+    languageSelection: 'Dil seçimi',
+    footerMotto: '0° Boylam · Her yerde',
   },
   ar: {
     tagline: 'العالم بكل تفاصيله.', masthead: 'مستقل · عالمي · منذ ٢٠٢٦', edition: 'النسخة العربية',
@@ -89,6 +93,8 @@ export const T = {
     sections: 'الأقسام', newsroom: 'غرفة أخبار ميريديان', updated: 'تحديث', notFound: 'الصفحة غير موجودة',
     notFoundBody: 'الصفحة التي تبحث عنها غير موجودة أو نُقلت.', backHome: 'العودة إلى الصفحة الرئيسية', home: 'الرئيسية', feed: 'RSS',
     readingSize: 'حجم النص',
+    languageSelection: 'اختيار اللغة',
+    footerMotto: 'خط الطول ٠° · في كل مكان',
   },
   fr: {
     tagline: 'Le monde, dans toute sa complexité.', masthead: 'Indépendant · International · Depuis 2026', edition: 'Édition française',
@@ -99,6 +105,8 @@ export const T = {
     sections: 'Rubriques', newsroom: 'Rédaction Meridian', updated: 'Mis à jour', notFound: 'Page introuvable',
     notFoundBody: 'La page demandée est introuvable ou a été déplacée.', backHome: 'Retour à l’accueil', home: 'Accueil', feed: 'RSS',
     readingSize: 'Taille du texte',
+    languageSelection: 'Choix de la langue',
+    footerMotto: '0° de longitude · Partout',
   },
   es: {
     tagline: 'El mundo, en toda su amplitud.', masthead: 'Independiente · Global · Desde 2026', edition: 'Edición en español',
@@ -109,6 +117,8 @@ export const T = {
     sections: 'Secciones', newsroom: 'Redacción Meridian', updated: 'Actualizado', notFound: 'Página no encontrada',
     notFoundBody: 'La página que buscas no existe o ha cambiado de dirección.', backHome: 'Volver a portada', home: 'Inicio', feed: 'RSS',
     readingSize: 'Tamaño del texto',
+    languageSelection: 'Selección de idioma',
+    footerMotto: '0° de longitud · En todas partes',
   },
 } as const;
 
@@ -129,6 +139,10 @@ export function fmtDate(d: Date, lang: Lang) {
 }
 
 export function fmtShortDate(d: Date, lang: Lang) {
+  if (lang === 'es') {
+    const months = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sept.', 'oct.', 'nov.', 'dic.'];
+    return `${d.getUTCDate()} ${months[d.getUTCMonth()]}`;
+  }
   return d.toLocaleDateString(LOCALE[lang], { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
