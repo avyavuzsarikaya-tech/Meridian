@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { url, absUrl, SITE_NAME } from '../config';
-import { SECTIONS, T, fmtLongDate, fmtClock, type Lang } from '../i18n';
+import { LANGS, LANGUAGE_NAMES, SECTIONS, T, feedPath, homePath, fmtLongDate, fmtClock, type Lang } from '../i18n';
 import type { Article } from '../content';
 
 const FONTS =
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Rubik:wght@400;500;600;700&display=swap';
+  'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Rubik:wght@400;500;600;700&display=swap';
 
 export function Document({
   lang,
@@ -31,7 +31,7 @@ export function Document({
   children: ReactNode;
 }) {
   return (
-    <html lang={lang}>
+    <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,7 +42,7 @@ export function Document({
         {alternates?.map((a) => (
           <link key={a.lang} rel="alternate" hrefLang={a.lang} href={absUrl(a.path)} />
         ))}
-        <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} (${lang.toUpperCase()})`} href={url(lang === 'tr' ? '/tr/feed.xml' : '/feed.xml')} />
+        <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} (${lang.toUpperCase()})`} href={url(feedPath(lang))} />
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -67,7 +67,7 @@ export function Document({
   );
 }
 
-export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath: { en: string; tr: string } }) {
+export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath: Record<Lang, string> }) {
   return (
     <div className="border-b hairline-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
@@ -76,23 +76,13 @@ export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath:
           <span className="hidden h-3 w-px bg-[hsl(var(--rule))] sm:inline-block" />
           <span data-clock>{fmtClock(now)} GMT</span>
         </div>
-        <nav aria-label="Edition" className="flex items-center gap-1">
-          <a
-            href={url(altPath.en)}
-            hrefLang="en"
-            lang="en"
-            className={`kicker px-2.5 py-1 transition-colors ${lang === 'en' ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]' : 'text-[hsl(var(--body))] hover:text-[hsl(var(--accent))]'}`}
-          >
-            English
-          </a>
-          <a
-            href={url(altPath.tr)}
-            hrefLang="tr"
-            lang="tr"
-            className={`kicker px-2.5 py-1 transition-colors ${lang === 'tr' ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]' : 'text-[hsl(var(--body))] hover:text-[hsl(var(--accent))]'}`}
-          >
-            Türkçe
-          </a>
+        <nav aria-label={T[lang].edition} className="flex flex-wrap items-center justify-end gap-1">
+          {LANGS.map((edition) => (
+            <a key={edition} href={url(altPath[edition])} hrefLang={edition} lang={edition}
+              aria-current={lang === edition ? 'page' : undefined}
+              className={`kicker whitespace-nowrap px-2 py-1 transition-colors ${lang === edition ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]' : 'text-[hsl(var(--body))] hover:text-[hsl(var(--accent))]'}`}
+            >{LANGUAGE_NAMES[edition]}</a>
+          ))}
         </nav>
       </div>
     </div>
@@ -101,7 +91,7 @@ export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath:
 
 export function Logo({ className = '' }: { className?: string }) {
   return (
-    <span className={className} lang="en">
+    <span className={className} lang="en" dir="ltr">
       Meri<span className="text-[hsl(var(--accent))]">d</span>ian
     </span>
   );
@@ -109,7 +99,7 @@ export function Logo({ className = '' }: { className?: string }) {
 
 export function Masthead({ lang, compact = false }: { lang: Lang; compact?: boolean }) {
   const t = T[lang];
-  const home = lang === 'tr' ? '/tr/' : '/';
+  const home = homePath(lang);
   return (
     <header className="relative overflow-hidden">
       <svg
@@ -176,10 +166,10 @@ export function Ticker({ lang, items }: { lang: Lang; items: Article[] }) {
 export function NavBar({ lang, active }: { lang: Lang; active?: string }) {
   const t = T[lang];
   return (
-    <nav className="site-nav sticky top-0 z-40 border-b hairline-b bg-[hsl(var(--paper)/0.94)] backdrop-blur-sm" aria-label={lang === 'tr' ? 'Ana gezinme' : 'Primary navigation'}>
+    <nav className="site-nav sticky top-0 z-40 border-b hairline-b bg-[hsl(var(--paper)/0.94)] backdrop-blur-sm" aria-label={t.sections}>
       <div className="mx-auto flex max-w-7xl items-center px-4 sm:px-6">
         <a
-          href={url(lang === 'tr' ? '/tr/' : '/')}
+          href={url(homePath(lang))}
           className="kicker shrink-0 border-r border-[hsl(var(--rule))] py-1 pl-0 pr-4 text-[hsl(var(--ink))] transition-colors hover:text-[hsl(var(--accent))]"
         >
           {t.home}
@@ -212,7 +202,7 @@ export function Footer({ lang }: { lang: Lang }) {
     <footer className="mt-10 border-t-2 ink-rule">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div className="md:col-span-2">
-          <a href={url(lang === 'tr' ? '/tr/' : '/')} className="font-serif-display text-4xl font-black uppercase tracking-tight">
+          <a href={url(homePath(lang))} className="font-serif-display text-4xl font-black uppercase tracking-tight">
             <Logo />
           </a>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-[hsl(var(--body))]">{t.about}</p>
@@ -234,7 +224,7 @@ export function Footer({ lang }: { lang: Lang }) {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))] sm:flex-row sm:px-6">
           <span lang="en">© {year} Meridian</span>
           <span className="flex items-center gap-4">
-            <a href={url(lang === 'tr' ? '/tr/feed.xml' : '/feed.xml')} className="hover:text-[hsl(var(--accent))]">{t.feed}</a>
+            <a href={url(feedPath(lang))} className="hover:text-[hsl(var(--accent))]">{t.feed}</a>
             <span lang="en">0° Longitude · Everywhere</span>
           </span>
         </div>

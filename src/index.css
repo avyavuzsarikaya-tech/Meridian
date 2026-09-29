@@ -44,6 +44,8 @@
     outline: 2px solid hsl(var(--accent));
     outline-offset: 2px;
   }
+  html[lang="ar"] body { font-family: 'Noto Sans Arabic', sans-serif; }
+  html[lang="ar"] .font-serif-display, html[lang="ar"] .article-body { font-family: 'Noto Naskh Arabic', serif; }
 }
 
 @layer utilities {
@@ -64,23 +66,27 @@
 /* ---------- haber metni ---------- */
 .article-body {
   font-family: 'Times New Roman', Times, Georgia, serif;
-  font-size: 1.22rem;
+  font-size: var(--article-font-size, 1.22rem);
   line-height: 1.7;
   color: hsl(var(--ink));
 }
+html[data-article-size="small"] { --article-font-size: 1.05rem; }
+html[data-article-size="large"] { --article-font-size: 1.5rem; }
+.reading-size-button[aria-pressed="true"] { background: hsl(var(--ink)); color: hsl(var(--cream)); }
+html[dir="rtl"] .source-list { padding-left: 0; padding-right: 1.25rem; }
 .article-body > * + * {
   margin-top: 1.1em;
 }
 .article-body h2 {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.6rem;
+  font-size: 1.35em;
   font-weight: 700;
   line-height: 1.25;
   margin-top: 1.8em;
 }
 .article-body h3 {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.3rem;
+  font-size: 1.1em;
   font-weight: 600;
   margin-top: 1.5em;
 }

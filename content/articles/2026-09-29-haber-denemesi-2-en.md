@@ -10,6 +10,11 @@ author: Meridian
 headline: false
 editorsPick: true
 breaking: false
+sources:
+  - title: Meridian — GitHub repository
+    url: https://github.com/avyavuzsarikaya-tech/Meridian
 ---
 
 This page is only for testing the site's appearance and publishing flow. It does not contain a real news story.
+
+Meridian's source files are available in its GitHub repository.[^1]

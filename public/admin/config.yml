@@ -91,6 +91,9 @@ collections:
         options:
           - { label: Türkçe, value: tr }
           - { label: English, value: en }
+          - { label: 'العربية', value: ar }
+          - { label: Français, value: fr }
+          - { label: Español, value: es }
 
       - label: '6. Kaynaklar'
         name: sources

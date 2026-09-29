@@ -7,12 +7,34 @@
     var d = new Date();
     if (clock) clock.textContent = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' }) + ' GMT';
     if (dateEl) {
-      var lang = dateEl.getAttribute('data-date') === 'tr' ? 'tr-TR' : 'en-GB';
+      var locales = { en: 'en-GB', tr: 'tr-TR', ar: 'ar', fr: 'fr-FR', es: 'es-ES' };
+      var lang = locales[dateEl.getAttribute('data-date')] || 'en-GB';
       dateEl.textContent = d.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
     }
   }
   tick();
   setInterval(tick, 1000);
+
+  // Okuma boyutu tüm haber sayfalarında hatırlanır.
+  var sizeButtons = document.querySelectorAll('[data-size-choice]');
+  var sizes = { small: true, normal: true, large: true };
+  function setReadingSize(size) {
+    if (!sizes[size]) size = 'normal';
+    document.documentElement.setAttribute('data-article-size', size);
+    sizeButtons.forEach(function (button) {
+      button.setAttribute('aria-pressed', button.getAttribute('data-size-choice') === size ? 'true' : 'false');
+    });
+  }
+  var savedSize = 'normal';
+  try { savedSize = localStorage.getItem('meridian-reading-size') || 'normal'; } catch (e) { /* depolama kapalı olabilir */ }
+  setReadingSize(savedSize);
+  sizeButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var size = button.getAttribute('data-size-choice');
+      setReadingSize(size);
+      try { localStorage.setItem('meridian-reading-size', size); } catch (e) { /* tercihi bu sayfada uygula */ }
+    });
+  });
 
   // Son dakika bandı
   var items = document.querySelectorAll('[data-ticker] .ticker-item');

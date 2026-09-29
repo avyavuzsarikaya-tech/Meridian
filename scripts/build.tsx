@@ -6,7 +6,7 @@ import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { BASE, REPO, SITE_NAME, SITE_URL, absUrl } from '../src/config';
 import { loadArticles, isLive, type Article } from '../src/content';
-import { LANGS, SECTIONS, T, sectionName, type Lang } from '../src/i18n';
+import { LANGS, LANGUAGE_NAMES, SECTIONS, T, feedPath, homePath, sectionName, type Lang } from '../src/i18n';
 import { Document, Footer, Masthead, NavBar, Ticker, TopBar } from '../src/components/Chrome';
 import { Home } from '../src/pages/Home';
 import { ArticlePage } from '../src/pages/ArticlePage';
@@ -39,8 +39,8 @@ function page(rel: string, el: ReactElement) {
   write(rel, '<!doctype html>' + renderToStaticMarkup(el));
 }
 
-function homePath(lang: Lang) {
-  return lang === 'tr' ? '/tr/' : '/';
+function languagePaths(getPath: (lang: Lang) => string): Record<Lang, string> {
+  return Object.fromEntries(LANGS.map((lang) => [lang, getPath(lang)])) as Record<Lang, string>;
 }
 
 function breaking(lang: Lang) {
@@ -61,7 +61,7 @@ function Shell({
 }: {
   lang: Lang;
   pagePath: string;
-  alt: { en: string; tr: string };
+  alt: Record<Lang, string>;
   compact?: boolean;
   activeSection?: string;
   title: string;
@@ -92,11 +92,11 @@ for (const lang of LANGS) {
   const list = byLang(lang);
   const p = homePath(lang);
   page(
-    p === '/' ? 'index.html' : 'tr/index.html',
+    p === '/' ? 'index.html' : `${lang}/index.html`,
     <Shell
       lang={lang}
       pagePath={p}
-      alt={{ en: '/', tr: '/tr/' }}
+      alt={languagePaths(homePath)}
       grain
       title={`${SITE_NAME} — ${t.tagline}`}
       description={t.about}
@@ -112,7 +112,6 @@ write('en/index.html', redirect('/'));
 // ---------- haber sayfaları ----------
 // Arşivdekiler de dahil: bağlantılar kırılmasın.
 for (const a of live) {
-  const counterpart = live.find((other) => other.lang !== a.lang && other.slug === a.slug);
   const related = byLang(a.lang)
     .filter((r) => r !== a && r.section === a.section && r.status === 'published')
     .slice(0, 3);
@@ -121,10 +120,7 @@ for (const a of live) {
     <Shell
       lang={a.lang}
       pagePath={a.path}
-      alt={{
-        en: a.lang === 'en' ? a.path : counterpart?.path ?? '/',
-        tr: a.lang === 'tr' ? a.path : counterpart?.path ?? '/tr/',
-      }}
+      alt={languagePaths((lang) => live.find((other) => other.lang === lang && other.slug === a.slug)?.path ?? homePath(lang))}
       compact
       activeSection={a.section}
       title={`${a.title} | ${SITE_NAME}`}
@@ -147,7 +143,7 @@ for (const lang of LANGS) {
       <Shell
         lang={lang}
         pagePath={p}
-        alt={{ en: `/en/section/${s.slug}/`, tr: `/tr/section/${s.slug}/` }}
+        alt={languagePaths((edition) => `/${edition}/section/${s.slug}/`)}
         compact
         activeSection={s.slug}
         title={`${s[lang]} | ${SITE_NAME}`}
@@ -162,7 +158,7 @@ for (const lang of LANGS) {
 // ---------- 404 ----------
 page(
   '404.html',
-  <Shell lang="en" pagePath="/404.html" alt={{ en: '/', tr: '/tr/' }} compact title={`${T.en.notFound} | ${SITE_NAME}`} description={T.en.notFoundBody} noindex>
+  <Shell lang="en" pagePath="/404.html" alt={languagePaths(homePath)} compact title={`${T.en.notFound} | ${SITE_NAME}`} description={T.en.notFoundBody} noindex>
     <section className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
       <h1 className="font-serif-display text-4xl font-bold">{T.en.notFound}</h1>
       <p className="mt-4 text-[hsl(var(--body))]">{T.en.notFoundBody}</p>
@@ -192,11 +188,11 @@ for (const lang of LANGS) {
     )
     .join('\n');
   write(
-    lang === 'tr' ? 'tr/feed.xml' : 'feed.xml',
+    feedPath(lang).slice(1),
     `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>${SITE_NAME}${lang === 'tr' ? ' (Türkçe)' : ''}</title>
+    <title>${SITE_NAME} (${LANGUAGE_NAMES[lang]})</title>
     <link>${xml(absUrl(homePath(lang)))}</link>
     <description>${xml(T[lang].about)}</description>
     <language>${lang}</language>
@@ -211,7 +207,7 @@ ${items}
 // ---------- sitemap, robots, llms.txt ----------
 const urls = [
   '/',
-  '/tr/',
+  ...LANGS.filter((lang) => lang !== 'en').map(homePath),
   ...live.map((a) => a.path),
   ...LANGS.flatMap((l) => SECTIONS.map((s) => `/${l}/section/${s.slug}/`)),
 ];
@@ -236,7 +232,7 @@ write(
 Every article page is plain HTML. Sources are listed at the end of each article.
 
 ${LANGS.map(
-  (lang) => `## ${lang === 'tr' ? 'Türkçe' : 'English'}
+  (lang) => `## ${LANGUAGE_NAMES[lang]}
 
 ${byLang(lang)
   .filter((a) => a.status === 'published')

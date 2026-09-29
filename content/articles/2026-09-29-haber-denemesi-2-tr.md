@@ -10,6 +10,11 @@ author: Meridian
 headline: false
 editorsPick: true
 breaking: false
+sources:
+  - title: Meridian — GitHub deposu
+    url: https://github.com/avyavuzsarikaya-tech/Meridian
 ---
 
 Bu sayfa yalnızca sitenin görünümünü ve yayın akışını denemek için hazırlanmıştır. Gerçek bir haber içermez.
+
+Meridian'ın kaynak dosyaları GitHub deposunda bulunur.[^1]

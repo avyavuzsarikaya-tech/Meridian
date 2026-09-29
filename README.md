@@ -7,6 +7,8 @@ Bağımsız, küresel haber sitesi. Tasarım (gri zemin dahil) Kimi'nin Meridian
 - Haberler `content/articles/` klasöründe, her biri ayrı bir metin dosyası olarak durur.
 - Siteye her değişiklikte (ve her saat başı) GitHub kendiliğinden yeni hâlini yayınlar.
 - Her sayfa hazır HTML olarak üretilir; JavaScript çalıştırmayan okuyucular ve yapay zekâlar da bütün metni görür.
+- Türkçe, İngilizce, Arapça, Fransızca ve İspanyolca yayınlar ayrı adreslerde açılır. Arapça sağdan sola okunur.
+- Haber sayfasındaki `A− / A / A+` düğmeleri metin boyutunu değiştirir; tercih aynı tarayıcıda hatırlanır.
 
 ## Haber eklemek
 
@@ -18,9 +20,11 @@ Bağımsız, küresel haber sitesi. Tasarım (gri zemin dahil) Kimi'nin Meridian
 
 Haber metninde ilgili cümlenin sonuna `[^1]` yaz. Kaynaklar alanındaki ilk satır bu numarayla eşleşir. İkinci kaynak için `[^2]` yaz; aynı kaynağa birden fazla cümlede atıf yapabilirsin. Sayfada numara üst simge olarak görünür ve tıklanınca yazının sonundaki kaynakça satırına iner. Kaynakça başlığına tıklayınca kaynak sitesine gider. Kaynakları haberin dilinde ayrı ayrı ekle.
 
+Örneği her dildeki ikinci deneme haberinde görebilirsin.
+
 ## Adresler
 
-- `/` İngilizce ön sayfa, `/tr/` Türkçe ön sayfa
+- `/` İngilizce ön sayfa; `/tr/`, `/ar/`, `/fr/`, `/es/` diğer dillerin ön sayfaları
 - `/tr/<haber-adi>/` haber sayfası
 - `/tr/section/<bolum>/` bölüm sayfası
 - `/feed.xml`, `/tr/feed.xml` RSS; `/sitemap.xml`; `/llms.txt` yapay zekâlar için özet liste

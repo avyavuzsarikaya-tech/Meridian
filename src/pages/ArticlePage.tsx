@@ -63,14 +63,22 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
           </section>
         )}
 
-        <div className="article-body mx-auto mt-8 max-w-3xl" dangerouslySetInnerHTML={{ __html: a.bodyHtml }} />
+        <div className="mx-auto mt-8 flex max-w-3xl items-center justify-end gap-2 font-mono-data text-[11px] uppercase tracking-wider" role="group" aria-label={t.readingSize}>
+          <span className="me-2 text-[hsl(var(--muted))]">{t.readingSize}</span>
+          {([['small', 'A−'], ['normal', 'A'], ['large', 'A+']] as const).map(([size, label]) => (
+            <button key={size} type="button" data-size-choice={size} aria-label={`${t.readingSize}: ${label}`} aria-pressed={size === 'normal'}
+              className="reading-size-button border border-[hsl(var(--rule))] px-2.5 py-1.5 text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))]"
+            ><span lang="en" dir="ltr">{label}</span></button>
+          ))}
+        </div>
+        <div className="article-body mx-auto mt-5 max-w-3xl" dangerouslySetInnerHTML={{ __html: a.bodyHtml }} />
 
         {a.sources.length > 0 && (
           <section className="mx-auto mt-12 max-w-3xl border-t-2 ink-rule pt-5" aria-labelledby="sources">
             <h2 id="sources" className="kicker text-[hsl(var(--accent))]">
               {t.sources}
             </h2>
-            <ol className="mt-3 list-decimal space-y-2 pl-5 text-[15px] leading-relaxed text-[hsl(var(--body))] marker:font-mono-data marker:text-[12px] marker:text-[hsl(var(--muted))]">
+            <ol className="source-list mt-3 list-decimal space-y-2 pl-5 text-[15px] leading-relaxed text-[hsl(var(--body))] marker:font-mono-data marker:text-[12px] marker:text-[hsl(var(--muted))]">
               {a.sources.map((s, i) => (
                 <li key={i} id={`source-${i + 1}`} className="scroll-mt-6 target:bg-[hsl(var(--cream))]">
                   {s.url ? (

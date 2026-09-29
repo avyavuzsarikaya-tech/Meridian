@@ -3,7 +3,7 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import { Marked } from 'marked';
 import { url } from './config';
-import { SECTIONS, type Lang } from './i18n';
+import { LANGS, SECTIONS, T, type Lang } from './i18n';
 
 export type Source = { title: string; url?: string };
 
@@ -67,7 +67,7 @@ function articleMarkdown(sourceCount: number, lang: Lang) {
     },
     renderer(token) {
       const n = Number(token.number);
-      const label = lang === 'tr' ? 'Kaynak' : 'Source';
+      const label = T[lang].sources;
       return `<sup class="source-citation"><a href="#source-${n}" aria-label="${label} ${n}">${n}</a></sup>`;
     },
   }] });
@@ -145,7 +145,7 @@ export function loadArticles(): LoadResult {
       warnings.push(`${file}: başlık yok, atlandı`);
       continue;
     }
-    const lang: Lang = data.language === 'tr' ? 'tr' : 'en';
+    const lang: Lang = LANGS.includes(data.language) ? data.language : 'en';
     const section = SECTIONS.some((s) => s.slug === data.section) ? String(data.section) : 'world';
     // Adres: elle girilmişse o; yoksa dosya adı (baştaki tarih atılır). Başlık sonradan
     // değişse de adres değişmesin diye başlıktan türetilmez.
