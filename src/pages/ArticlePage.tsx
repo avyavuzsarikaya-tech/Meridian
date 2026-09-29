@@ -63,7 +63,7 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
           </section>
         )}
 
-        <div className="mx-auto mt-8 flex max-w-3xl items-center justify-end gap-2 font-mono-data text-[11px] uppercase tracking-wider" role="group" aria-label={t.readingSize}>
+        <div className={`mx-auto mt-8 flex max-w-3xl items-center gap-2 font-mono-data text-[11px] uppercase tracking-wider ${lang === 'ar' ? 'justify-start' : 'justify-end'}`} role="group" aria-label={t.readingSize}>
           <span className="me-2 text-[hsl(var(--muted))]">{t.readingSize}</span>
           {([['small', 'A−'], ['normal', 'A'], ['large', 'A+']] as const).map(([size, label]) => (
             <button key={size} type="button" data-size-choice={size} aria-label={`${t.readingSize}: ${label}`} aria-pressed={size === 'normal'}
