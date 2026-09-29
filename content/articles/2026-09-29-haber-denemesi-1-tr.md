@@ -8,6 +8,7 @@ status: published
 publishedAt: 2026-09-29T00:00:00Z
 author: Meridian
 headline: true
+audio: /audio/uploads/haber-denemesi-1.mp3
 editorsPick: false
 breaking: false
 ---
