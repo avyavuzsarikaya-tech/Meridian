@@ -1,0 +1,15 @@
+---
+title: Haber Denemesi 1
+spot: Test entry. This is not a news report.
+section: world
+language: en
+slug: haber-denemesi-1
+status: published
+publishedAt: 2026-09-29T00:00:00Z
+author: Meridian
+headline: true
+editorsPick: false
+breaking: false
+---
+
+This page is only for testing the site's appearance and publishing flow. It does not contain a real news story.
