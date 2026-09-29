@@ -1,5 +1,5 @@
 ---
-title: Haber Denemesi 2
+title: News Test 2
 spot: Test entry. This is not a news report.
 section: world
 language: en

@@ -1,5 +1,5 @@
 ---
-title: Haber Denemesi 1
+title: News Test 1
 spot: Test entry. This is not a news report.
 section: world
 language: en
@@ -8,6 +8,7 @@ status: published
 publishedAt: 2026-09-29T00:00:00Z
 author: Meridian
 headline: true
+audio: /audio/uploads/news-test-1.mp3
 editorsPick: false
 breaking: false
 ---

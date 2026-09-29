@@ -112,6 +112,7 @@ write('en/index.html', redirect('/'));
 // ---------- haber sayfaları ----------
 // Arşivdekiler de dahil: bağlantılar kırılmasın.
 for (const a of live) {
+  const counterpart = live.find((other) => other.lang !== a.lang && other.slug === a.slug);
   const related = byLang(a.lang)
     .filter((r) => r !== a && r.section === a.section && r.status === 'published')
     .slice(0, 3);
@@ -120,7 +121,10 @@ for (const a of live) {
     <Shell
       lang={a.lang}
       pagePath={a.path}
-      alt={{ en: a.lang === 'en' ? a.path : '/', tr: a.lang === 'tr' ? a.path : '/tr/' }}
+      alt={{
+        en: a.lang === 'en' ? a.path : counterpart?.path ?? '/',
+        tr: a.lang === 'tr' ? a.path : counterpart?.path ?? '/tr/',
+      }}
       compact
       activeSection={a.section}
       title={`${a.title} | ${SITE_NAME}`}
