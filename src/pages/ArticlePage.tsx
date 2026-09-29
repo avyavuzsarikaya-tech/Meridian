@@ -1,13 +1,13 @@
 import { url } from '../config';
 import { T, sectionName, fmtStamp, type Lang } from '../i18n';
 import type { Article } from '../content';
-import { Cover } from '../components/Chrome';
+import { BylineName, Cover } from '../components/Chrome';
 import { Card } from './Home';
 
 export function ArticlePage({ a, related }: { a: Article; related: Article[] }) {
   const lang: Lang = a.lang;
   const t = T[lang];
-  const who = [a.author || t.newsroom, a.location].filter(Boolean).join(' · ');
+
 
   return (
     <>
@@ -23,7 +23,7 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
             <p className="mt-5 font-serif-display text-xl leading-relaxed text-[hsl(var(--body))]">{a.spot}</p>
           )}
           <div className="mt-6 flex flex-col gap-1 border-y border-[hsl(var(--rule))] py-3 font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))] sm:flex-row sm:items-center sm:justify-between">
-            <span>{who}</span>
+            <span><BylineName a={a} lang={lang} /></span>
             <span>
               <time dateTime={a.publishedAt.toISOString()}>{fmtStamp(a.publishedAt, lang)}</time>
               {a.updatedAt && a.updatedAt > a.publishedAt ? (
