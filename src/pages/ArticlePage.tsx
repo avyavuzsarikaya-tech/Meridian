@@ -13,12 +13,14 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
     <>
       <article className="mx-auto max-w-7xl px-4 pb-6 pt-8 sm:px-6 sm:pt-12">
         <header className="mx-auto max-w-3xl">
-          <a href={url(homePath(lang))} className="mb-6 inline-flex items-center gap-2 border border-[hsl(var(--rule))] px-3 py-2 font-mono-data text-xs font-semibold uppercase tracking-wider text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))] hover:text-[hsl(var(--accent))]">
-            <span aria-hidden="true">{lang === 'ar' ? '→' : '←'}</span>{t.backHome}
-          </a>
-          <a href={url(`/${lang}/section/${a.section}/`)} className="kicker text-[hsl(var(--accent))] hover:underline">
-            {sectionName(a.section, lang)}
-          </a>
+          <div className="mb-6 flex flex-wrap items-center gap-4">
+            <a href={url(homePath(lang))} className="btn inline-flex items-center gap-2 px-3 py-2">
+              <span className="back-arrow" aria-hidden="true">{lang === 'ar' ? '→' : '←'}</span>{t.backHome}
+            </a>
+            <a href={url(`/${lang}/section/${a.section}/`)} className="kicker text-[hsl(var(--accent))] hover:underline">
+              {sectionName(a.section, lang)}
+            </a>
+          </div>
           <h1 className="mt-3 font-serif-display text-4xl font-bold leading-[1.1] tracking-tight text-balance sm:text-5xl">
             {a.title}
           </h1>
@@ -60,20 +62,34 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
               <h2 className="font-serif-display text-xl font-semibold">{t.listen}</h2>
               <span className="kicker text-[hsl(var(--muted))]">{t.aiNarration}</span>
             </div>
-            <audio data-article-audio controls preload="none" className="w-full" aria-label={t.listen}>
+            <audio data-article-audio controls preload="metadata" className="w-full" aria-label={t.listen}>
               <source src={url(a.audio)} />
               <a href={url(a.audio)}>{t.audioDownload}</a>
             </audio>
+            <div data-audio-controls dir="ltr" className="flex flex-wrap items-center gap-3">
+              <button type="button" className="btn-primary" data-audio-play data-label-play={t.play} data-label-pause={t.pause} aria-label={t.play}>
+                <span aria-hidden="true">▶</span>
+              </button>
+              <input data-audio-seek type="range" min="0" max="1000" step="1" defaultValue="0" aria-label={t.seek} />
+              <span data-audio-time className="whitespace-nowrap font-mono-data text-[11px] text-[hsl(var(--muted))]">00:00 / --:--</span>
+              <div role="group" aria-label={t.speed} className="inline-flex items-center gap-1">
+                {([['1', '1×'], ['1.25', '1.25×'], ['1.5', '1.5×']] as const).map(([rate, label]) => (
+                  <button key={rate} type="button" className="btn px-2 py-1.5" data-rate={rate} aria-pressed={rate === '1'}>{label}</button>
+                ))}
+              </div>
+            </div>
           </section>
         )}
 
         <div className="mx-auto mt-8 flex max-w-3xl items-center gap-2 font-mono-data text-[11px] uppercase tracking-wider" style={{ justifyContent: lang === 'ar' ? 'flex-start' : 'flex-end' }} role="group" aria-label={t.readingSize}>
           <span className="me-2 text-[hsl(var(--muted))]">{t.readingSize}</span>
-          {([['small', 'A−'], ['normal', 'A'], ['large', 'A+']] as const).map(([size, label]) => (
-            <button key={size} type="button" data-size-choice={size} aria-label={`${t.readingSize}: ${label}`} aria-pressed={size === 'normal'}
-              className="reading-size-button border border-[hsl(var(--rule))] px-2.5 py-1.5 text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))]"
-            ><span lang="en" dir="ltr">{label}</span></button>
-          ))}
+          <div className="reading-size-group inline-flex">
+            {([['small', 'A−'], ['normal', 'A'], ['large', 'A+']] as const).map(([size, label]) => (
+              <button key={size} type="button" data-size-choice={size} aria-label={`${t.readingSize}: ${label}`} aria-pressed={size === 'normal'}
+                className="btn reading-size-button px-2.5 py-1.5"
+              ><span lang="en" dir="ltr">{label}</span></button>
+            ))}
+          </div>
         </div>
         <div className="article-body mx-auto mt-5 max-w-3xl" dangerouslySetInnerHTML={{ __html: a.bodyHtml }} />
 
@@ -119,11 +135,6 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
             ))}
           </div>
         )}
-        <div className="mx-auto mt-10 max-w-3xl border-t border-[hsl(var(--rule))] pt-6">
-          <a href={url(homePath(lang))} className="inline-flex items-center gap-2 border border-[hsl(var(--rule))] px-3 py-2 font-mono-data text-xs font-semibold uppercase tracking-wider text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))] hover:text-[hsl(var(--accent))]">
-            <span aria-hidden="true">{lang === 'ar' ? '→' : '←'}</span>{t.backHome}
-          </a>
-        </div>
       </article>
 
       {related.length > 0 && (
