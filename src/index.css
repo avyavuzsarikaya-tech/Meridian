@@ -89,6 +89,20 @@
   text-decoration-color: hsl(var(--accent));
   text-underline-offset: 3px;
 }
+.article-body .source-citation {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.64em;
+  line-height: 0;
+  vertical-align: super;
+  margin-left: 0.12em;
+}
+.article-body .source-citation a {
+  text-decoration: none;
+  color: hsl(var(--accent));
+}
+.article-body .source-citation a:hover {
+  text-decoration: underline;
+}
 .article-body blockquote {
   border-left: 3px solid hsl(var(--accent));
   padding-left: 1.1em;

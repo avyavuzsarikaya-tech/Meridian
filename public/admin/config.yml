@@ -69,6 +69,7 @@ collections:
       - label: '3. Haber metni'
         name: body
         widget: markdown
+        hint: 'Kaynak numarasını ilgili cümlenin sonuna [^1] olarak yaz. 1, aşağıdaki Kaynaklar listesinin ilk satırıdır; [^2] ikinci satırdır. Metin sonundaki Kaynaklar listesi otomatik oluşur.'
 
       - label: '4. Bölüm'
         name: section
@@ -95,11 +96,11 @@ collections:
         name: sources
         widget: list
         required: false
-        hint: Haberin dayandığı her kaynak için bir satır. Sayfanın altında numaralı liste olarak çıkar.
+        hint: 'Metindeki [^1], [^2] numaraları burada yazdığın kaynakların sırasına bağlanır. Her satıra başlık ve asıl kaynağın bağlantısını ekle.'
         summary: '{{fields.title}}'
         fields:
           - { label: 'Kaynak adı', name: title, widget: string }
-          - { label: 'Bağlantı', name: url, widget: string, required: false }
+          - { label: 'Bağlantı', name: url, widget: string }
 
       - label: '7. Kapak görseli'
         name: cover

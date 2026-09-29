@@ -37,24 +37,42 @@ export type Article = {
 
 const CONTENT_DIR = path.resolve(process.env.CONTENT_DIR ?? 'content/articles');
 
-// Gövdedeki "/images/..." yollarını yayın köküne göre düzelt.
-const md = new Marked({
-  renderer: {
-    image({ href, title, text }) {
-      const src = href.startsWith('/') ? url(href) : href;
-      const t = title ? ` title="${escapeAttr(title)}"` : '';
-      return `<img src="${escapeAttr(src)}" alt="${escapeAttr(text)}"${t} loading="lazy" decoding="async">`;
+// Görsellerin yollarını düzelt; [^1] gibi numaraları kaynakça satırlarına bağla.
+function articleMarkdown(sourceCount: number, lang: Lang) {
+  const md = new Marked({
+    renderer: {
+      image({ href, title, text }) {
+        const src = href.startsWith('/') ? url(href) : href;
+        const t = title ? ` title="${escapeAttr(title)}"` : '';
+        return `<img src="${escapeAttr(src)}" alt="${escapeAttr(text)}"${t} loading="lazy" decoding="async">`;
+      },
+      link({ href, title, tokens }) {
+        const inner = this.parser.parseInline(tokens);
+        const external = /^https?:\/\//i.test(href);
+        const h = href.startsWith('/') ? url(href) : href;
+        const t = title ? ` title="${escapeAttr(title)}"` : '';
+        const ext = external ? ' target="_blank" rel="noopener"' : '';
+        return `<a href="${escapeAttr(h)}"${t}${ext}>${inner}</a>`;
+      },
     },
-    link({ href, title, tokens }) {
-      const inner = this.parser.parseInline(tokens);
-      const external = /^https?:\/\//i.test(href);
-      const h = href.startsWith('/') ? url(href) : href;
-      const t = title ? ` title="${escapeAttr(title)}"` : '';
-      const ext = external ? ' target="_blank" rel="noopener"' : '';
-      return `<a href="${escapeAttr(h)}"${t}${ext}>${inner}</a>`;
+  });
+  md.use({ extensions: [{
+    name: 'sourceCitation',
+    level: 'inline',
+    start(src) { return src.match(/\[\^[1-9]\d*\]/)?.index; },
+    tokenizer(src) {
+      const match = /^\[\^([1-9]\d*)\]/.exec(src);
+      if (!match || Number(match[1]) > sourceCount) return;
+      return { type: 'sourceCitation', raw: match[0], number: Number(match[1]) };
     },
-  },
-});
+    renderer(token) {
+      const n = Number(token.number);
+      const label = lang === 'tr' ? 'Kaynak' : 'Source';
+      return `<sup class="source-citation"><a href="#source-${n}" aria-label="${label} ${n}">${n}</a></sup>`;
+    },
+  }] });
+  return md;
+}
 
 function escapeAttr(s: string) {
   return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -135,6 +153,13 @@ export function loadArticles(): LoadResult {
     const slug = slugify(String(data.slug || '')) || slugify(fromFile) || slugify(title);
     const publishedAt = toDate(data.publishedAt) ?? fs.statSync(path.join(CONTENT_DIR, file)).mtime;
     const bodyText = content.trim();
+    const sources = toSources(data.sources);
+    for (const marker of bodyText.matchAll(/\[\^(\d+)\]/g)) {
+      const n = Number(marker[1]);
+      if (n < 1 || n > sources.length) {
+        warnings.push(`${file}: [^${n}] için kaynak listesinde karşılık yok`);
+      }
+    }
     const words = bodyText.split(/\s+/).filter(Boolean).length;
     const status = (['draft', 'published', 'archived'] as const).includes(data.status)
       ? (data.status as Article['status'])
@@ -161,8 +186,8 @@ export function loadArticles(): LoadResult {
       publishedAt,
       updatedAt: toDate(data.updatedAt),
       tags: toTags(data.tags),
-      sources: toSources(data.sources),
-      bodyHtml: md.parse(bodyText) as string,
+      sources,
+      bodyHtml: articleMarkdown(sources.length, lang).parse(bodyText) as string,
       bodyText,
       path: `/${lang}/${slug}/`,
     });

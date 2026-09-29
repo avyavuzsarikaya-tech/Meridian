@@ -72,9 +72,9 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
             </h2>
             <ol className="mt-3 list-decimal space-y-2 pl-5 text-[15px] leading-relaxed text-[hsl(var(--body))] marker:font-mono-data marker:text-[12px] marker:text-[hsl(var(--muted))]">
               {a.sources.map((s, i) => (
-                <li key={i}>
+                <li key={i} id={`source-${i + 1}`} className="scroll-mt-6 target:bg-[hsl(var(--cream))]">
                   {s.url ? (
-                    <a href={s.url} target="_blank" rel="noopener" className="underline decoration-[hsl(var(--rule))] underline-offset-4 hover:decoration-[hsl(var(--accent))]">
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[hsl(var(--rule))] underline-offset-4 hover:decoration-[hsl(var(--accent))]">
                       {s.title}
                     </a>
                   ) : (
