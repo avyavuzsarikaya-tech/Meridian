@@ -243,12 +243,23 @@ export function Footer({ lang }: { lang: Lang }) {
   );
 }
 
+export function BylineName({ a, lang }: { a: Article; lang: Lang }) {
+  const author = a.author || T[lang].newsroom;
+  return (
+    <>
+      {author.trim().toLowerCase() === 'meridian'
+        ? <span lang="en" className="normal-case">MERIDIAN</span>
+        : author}
+      {a.location ? ` · ${a.location}` : null}
+    </>
+  );
+}
+
 export function Byline({ a, lang, withTime = true }: { a: Article; lang: Lang; withTime?: boolean }) {
   const t = T[lang];
-  const parts = [a.author || t.newsroom, a.location].filter(Boolean).join(' · ');
   return (
     <p className="font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))]">
-      {parts}
+      <BylineName a={a} lang={lang} />
       {withTime ? (
         <>
           {' — '}
