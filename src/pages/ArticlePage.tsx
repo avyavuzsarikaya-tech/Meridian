@@ -115,7 +115,7 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
           <div className="flex items-center gap-4">
             <h2 className="font-serif-display text-2xl font-bold tracking-tight">
-              {t.moreFrom}: {sectionName(a.section, lang)}
+              {t.moreFrom}{lang === 'fr' ? '\u00a0:' : ':'} {sectionName(a.section, lang)}
             </h2>
             <div className="h-px flex-1 bg-[hsl(var(--rule))]" />
           </div>
