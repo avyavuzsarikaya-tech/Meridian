@@ -94,7 +94,7 @@
   [data-audio-controls] { display: none; }
   html.js [data-article-audio] { display: none; }
   html.js [data-audio-controls] { display: flex; }
-  [data-audio-play] { width: 40px; height: 40px; flex: none; }
+  [data-audio-play] { width: 40px; height: 40px; flex: none; font-size: 16px; line-height: 1; }
   [data-audio-seek] {
     flex: 1;
     min-width: 80px;
