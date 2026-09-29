@@ -9,8 +9,8 @@ backend:
     create: 'Yeni haber: {{slug}}'
     update: 'Haber güncellendi: {{slug}}'
     delete: 'Haber silindi: {{slug}}'
-    uploadMedia: 'Görsel yüklendi: {{path}}'
-    deleteMedia: 'Görsel silindi: {{path}}'
+    uploadMedia: 'Dosya yüklendi: {{path}}'
+    deleteMedia: 'Dosya silindi: {{path}}'
 
 site_url: __SITE_URL__
 display_url: __SITE_URL__
@@ -105,6 +105,16 @@ collections:
         name: cover
         widget: image
         required: false
+
+      - label: 'Seslendirme dosyası'
+        name: audio
+        widget: file
+        required: false
+        accept: 'audio/mpeg,audio/mp4,audio/ogg,.mp3,.m4a,.ogg'
+        choose_url: false
+        media_folder: /public/audio/uploads
+        public_folder: /audio/uploads
+        hint: 'Yapay zekâ seslendirmesini yükle. Dosya varsa haber sayfasında oynatıcı görünür.'
 
       - label: 'Görselin açıklaması (görme engelliler ve yapay zekâlar için)'
         name: imageAlt

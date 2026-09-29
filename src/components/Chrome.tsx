@@ -174,9 +174,16 @@ export function Ticker({ lang, items }: { lang: Lang; items: Article[] }) {
 }
 
 export function NavBar({ lang, active }: { lang: Lang; active?: string }) {
+  const t = T[lang];
   return (
-    <nav className="site-nav sticky top-0 z-40 border-b hairline-b bg-[hsl(var(--paper)/0.94)] backdrop-blur-sm" aria-label="Sections">
+    <nav className="site-nav sticky top-0 z-40 border-b hairline-b bg-[hsl(var(--paper)/0.94)] backdrop-blur-sm" aria-label={lang === 'tr' ? 'Ana gezinme' : 'Primary navigation'}>
       <div className="mx-auto flex max-w-7xl items-center px-4 sm:px-6">
+        <a
+          href={url(lang === 'tr' ? '/tr/' : '/')}
+          className="kicker shrink-0 border-r border-[hsl(var(--rule))] py-1 pl-0 pr-4 text-[hsl(var(--ink))] transition-colors hover:text-[hsl(var(--accent))]"
+        >
+          {t.home}
+        </a>
         <div className="flex items-center gap-1 overflow-x-auto py-3 [scrollbar-width:none]">
           {SECTIONS.map((s) => (
             <a

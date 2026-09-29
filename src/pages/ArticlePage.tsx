@@ -50,6 +50,19 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
           </figure>
         )}
 
+        {a.audio && (
+          <section className="mx-auto mt-8 max-w-3xl border-y border-[hsl(var(--rule))] py-5" aria-label={t.listen}>
+            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="font-serif-display text-xl font-semibold">{t.listen}</h2>
+              <span className="kicker text-[hsl(var(--muted))]">{t.aiNarration}</span>
+            </div>
+            <audio controls preload="none" className="w-full" aria-label={t.listen}>
+              <source src={url(a.audio)} />
+              <a href={url(a.audio)}>{t.audioDownload}</a>
+            </audio>
+          </section>
+        )}
+
         <div className="article-body mx-auto mt-8 max-w-3xl" dangerouslySetInnerHTML={{ __html: a.bodyHtml }} />
 
         {a.sources.length > 0 && (

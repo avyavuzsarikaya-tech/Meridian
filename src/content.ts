@@ -15,6 +15,7 @@ export type Article = {
   spot: string;
   section: string;
   cover?: string;
+  audio?: string;
   imageAlt?: string;
   imageCaption?: string;
   author?: string;
@@ -147,6 +148,7 @@ export function loadArticles(): LoadResult {
       spot: String(data.spot ?? '').trim(),
       section,
       cover: data.cover ? String(data.cover) : undefined,
+      audio: data.audio ? String(data.audio) : undefined,
       imageAlt: data.imageAlt ? String(data.imageAlt) : undefined,
       imageCaption: data.imageCaption ? String(data.imageCaption) : undefined,
       author: data.author ? String(data.author) : undefined,
