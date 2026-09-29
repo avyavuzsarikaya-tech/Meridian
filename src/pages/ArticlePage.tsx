@@ -1,5 +1,5 @@
 import { url } from '../config';
-import { T, sectionName, fmtStamp, type Lang } from '../i18n';
+import { T, homePath, sectionName, fmtStamp, type Lang } from '../i18n';
 import type { Article } from '../content';
 import { BylineName, Cover } from '../components/Chrome';
 import { Card } from './Home';
@@ -13,6 +13,9 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
     <>
       <article className="mx-auto max-w-7xl px-4 pb-6 pt-8 sm:px-6 sm:pt-12">
         <header className="mx-auto max-w-3xl">
+          <a href={url(homePath(lang))} className="mb-6 inline-flex items-center gap-2 border border-[hsl(var(--rule))] px-3 py-2 font-mono-data text-xs font-semibold uppercase tracking-wider text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))] hover:text-[hsl(var(--accent))]">
+            <span aria-hidden="true">{lang === 'ar' ? '→' : '←'}</span>{t.backHome}
+          </a>
           <a href={url(`/${lang}/section/${a.section}/`)} className="kicker text-[hsl(var(--accent))] hover:underline">
             {sectionName(a.section, lang)}
           </a>
@@ -116,6 +119,11 @@ export function ArticlePage({ a, related }: { a: Article; related: Article[] }) 
             ))}
           </div>
         )}
+        <div className="mx-auto mt-10 max-w-3xl border-t border-[hsl(var(--rule))] pt-6">
+          <a href={url(homePath(lang))} className="inline-flex items-center gap-2 border border-[hsl(var(--rule))] px-3 py-2 font-mono-data text-xs font-semibold uppercase tracking-wider text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))] hover:text-[hsl(var(--accent))]">
+            <span aria-hidden="true">{lang === 'ar' ? '→' : '←'}</span>{t.backHome}
+          </a>
+        </div>
       </article>
 
       {related.length > 0 && (

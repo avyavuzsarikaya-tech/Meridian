@@ -8,6 +8,7 @@ translationKey: demo-2
 status: published
 publishedAt: 2026-09-29T00:01:00Z
 author: Meridian
+audio: /audio/uploads/haber-denemesi-2.mp3
 headline: false
 editorsPick: true
 sources:
