@@ -12,7 +12,6 @@ publishedAt: 2026-09-29T00:01:00Z
 author: Meridian
 headline: false
 editorsPick: true
-breaking: false
 sources:
   - title: Meridian — dépôt GitHub
     url: https://github.com/avyavuzsarikaya-tech/Meridian

@@ -13,7 +13,6 @@ author: Meridian
 headline: true
 audio: /audio/uploads/test-1-fr.mp3
 editorsPick: false
-breaking: false
 ---
 
 Cette page sert uniquement à tester l'apparence du site et le processus de publication. Elle ne présente aucune véritable actualité.

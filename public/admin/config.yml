@@ -142,11 +142,6 @@ collections:
         widget: boolean
         default: false
 
-      - label: 'Son dakika (üstteki banda düşer, 48 saat kalır)'
-        name: breaking
-        widget: boolean
-        default: false
-
       - label: '9. Durum'
         name: status
         widget: select
@@ -198,4 +193,10 @@ collections:
         name: updatedAt
         widget: datetime
         required: false
-        hint: Haberde önemli bir düzeltme yaptıysan doldur; sayfada "Güncellendi" olarak görünür.
+        hint: Metinde önemli bir değişiklik yaptıysan doldur; sayfada "Güncellendi" olarak görünür.
+
+      - label: Güncelleme notu
+        name: updateNote
+        widget: text
+        required: false
+        hint: Önemli değişikliği okura bir cümleyle açıkla. Güncellenme zamanı ile birlikte görünür.

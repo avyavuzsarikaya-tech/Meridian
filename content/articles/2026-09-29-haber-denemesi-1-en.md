@@ -13,7 +13,6 @@ author: Meridian
 headline: true
 audio: /audio/uploads/news-test-1.mp3
 editorsPick: false
-breaking: false
 ---
 
 This page is only for testing the site's appearance and publishing flow. It does not contain a real news story.

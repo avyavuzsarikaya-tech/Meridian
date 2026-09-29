@@ -1,20 +1,5 @@
 // Sayfadaki küçük hareketler. JavaScript kapalıysa site yine eksiksiz okunur.
 (function () {
-  // GMT saat
-  var clock = document.querySelector('[data-clock]');
-  var dateEl = document.querySelector('[data-date]');
-  function tick() {
-    var d = new Date();
-    if (clock) clock.textContent = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' }) + ' GMT';
-    if (dateEl) {
-      var locales = { en: 'en-GB', tr: 'tr-TR', ar: 'ar', fr: 'fr-FR', es: 'es-ES' };
-      var lang = locales[dateEl.getAttribute('data-date')] || 'en-GB';
-      dateEl.textContent = d.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-    }
-  }
-  tick();
-  setInterval(tick, 1000);
-
   // Okuma boyutu tüm haber sayfalarında hatırlanır.
   var sizeButtons = document.querySelectorAll('[data-size-choice]');
   var sizes = { small: true, normal: true, large: true };
@@ -36,32 +21,10 @@
     });
   });
 
-  // Son dakika bandı
-  var items = document.querySelectorAll('[data-ticker] .ticker-item');
-  if (items.length > 1) {
-    var i = 0;
-    setInterval(function () {
-      var cur = items[i];
-      i = (i + 1) % items.length;
-      var next = items[i];
-      cur.removeAttribute('data-active');
-      cur.setAttribute('data-leaving', 'true');
-      next.removeAttribute('data-leaving');
-      next.setAttribute('data-active', 'true');
-      setTimeout(function () { cur.removeAttribute('data-leaving'); }, 900);
-    }, 4200);
-  }
-
-  // Menü: aşağı kaydırınca gizle, yukarı kaydırınca göster
-  var nav = document.querySelector('.site-nav');
-  var lastY = 0;
-  if (nav) {
-    window.addEventListener('scroll', function () {
-      var y = window.scrollY;
-      nav.classList.toggle('nav-hidden', y > 160 && y > lastY);
-      lastY = y;
-    }, { passive: true });
-  }
+  // Bir ses dosyası sonradan silinirse bozuk oynatıcıyı kaldır.
+  document.querySelectorAll('audio[data-article-audio]').forEach(function (player) {
+    player.addEventListener('error', function () { player.closest('[data-audio-section]')?.remove(); }, true);
+  });
 
   // Kaydırınca beliren bloklar
   var targets = document.querySelectorAll('.reveal');

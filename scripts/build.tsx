@@ -7,10 +7,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { BASE, REPO, SITE_NAME, SITE_URL, absUrl } from '../src/config';
 import { loadArticles, isLive, type Article } from '../src/content';
 import { LANGS, LANGUAGE_NAMES, SECTIONS, T, feedPath, homePath, sectionName, type Lang } from '../src/i18n';
-import { Document, Footer, Masthead, NavBar, Ticker, TopBar } from '../src/components/Chrome';
+import { Document, Footer, Masthead, NavBar, TopBar } from '../src/components/Chrome';
 import { Home } from '../src/pages/Home';
 import { ArticlePage } from '../src/pages/ArticlePage';
 import { SectionPage } from '../src/pages/SectionPage';
+import { InfoPage, type InfoKind } from '../src/pages/InfoPage';
 
 const OUT = path.resolve('dist');
 const now = new Date();
@@ -28,6 +29,7 @@ warnings.forEach((w) => console.warn('uyarı:', w));
 
 const live = articles.filter((a) => isLive(a, now));
 const byLang = (lang: Lang) => live.filter((a) => a.lang === lang);
+const visibleSections = (lang: Lang) => SECTIONS.filter((s) => byLang(lang).some((a) => a.section === s.slug && a.status === 'published'));
 
 function write(rel: string, html: string) {
   const file = path.join(OUT, rel);
@@ -41,13 +43,6 @@ function page(rel: string, el: ReactElement) {
 
 function languagePaths(getPath: (lang: Lang) => string): Record<Lang, string> {
   return Object.fromEntries(LANGS.map((lang) => [lang, getPath(lang)])) as Record<Lang, string>;
-}
-
-function breaking(lang: Lang) {
-  const twoDays = 48 * 3600_000;
-  return byLang(lang)
-    .filter((a) => a.status === 'published' && a.breaking && now.getTime() - a.publishedAt.getTime() < twoDays)
-    .slice(0, 5);
 }
 
 function Shell({
@@ -76,10 +71,9 @@ function Shell({
     <Document lang={lang} path={pagePath} {...meta}>
       <TopBar lang={lang} now={now} altPath={alt} />
       <Masthead lang={lang} compact={compact} />
-      <Ticker lang={lang} items={breaking(lang)} />
-      <NavBar lang={lang} active={activeSection} />
+      <NavBar lang={lang} active={activeSection} sections={visibleSections(lang)} />
       <main>{children}</main>
-      <Footer lang={lang} />
+      <Footer lang={lang} sections={visibleSections(lang)} />
     </Document>
   );
 }
@@ -98,7 +92,7 @@ for (const lang of LANGS) {
       pagePath={p}
       alt={languagePaths(homePath)}
       grain
-      title={`${SITE_NAME} — ${t.tagline}`}
+      title={SITE_NAME}
       description={t.about}
       jsonLd={{ '@context': 'https://schema.org', ...publisher, inLanguage: lang }}
     >
@@ -108,6 +102,18 @@ for (const lang of LANGS) {
 }
 // /en/ → /
 write('en/index.html', redirect('/'));
+
+// ---------- hakkında, ilkeler, iletişim ----------
+for (const lang of LANGS) {
+  for (const kind of ['about', 'principles', 'contact'] as InfoKind[]) {
+    const title = kind === 'about' ? T[lang].aboutPage : T[lang][kind];
+    page(`${lang}/${kind}/index.html`,
+      <Shell lang={lang} pagePath={`/${lang}/${kind}/`} alt={languagePaths((edition) => `/${edition}/${kind}/`)} compact
+        title={`${title} | ${SITE_NAME}`} description={T[lang].about}>
+        <InfoPage lang={lang} kind={kind} />
+      </Shell>);
+  }
+}
 
 // ---------- haber sayfaları ----------
 // Arşivdekiler de dahil: bağlantılar kırılmasın.
@@ -151,7 +157,7 @@ for (const a of live) {
 for (const lang of LANGS) {
   for (const s of SECTIONS) {
     const p = `/${lang}/section/${s.slug}/`;
-    const list = byLang(lang).filter((a) => a.section === s.slug);
+    const list = byLang(lang).filter((a) => a.section === s.slug && a.status === 'published');
     page(
       p.slice(1) + 'index.html',
       <Shell
@@ -223,7 +229,8 @@ const urls = [
   '/',
   ...LANGS.filter((lang) => lang !== 'en').map(homePath),
   ...live.map((a) => a.path),
-  ...LANGS.flatMap((l) => SECTIONS.map((s) => `/${l}/section/${s.slug}/`)),
+  ...LANGS.flatMap((l) => visibleSections(l).map((s) => `/${l}/section/${s.slug}/`)),
+  ...LANGS.flatMap((l) => (['about', 'principles', 'contact'] as const).map((kind) => `/${l}/${kind}/`)),
 ];
 write(
   'sitemap.xml',

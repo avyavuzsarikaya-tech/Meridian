@@ -25,10 +25,10 @@ export type Article = {
   readMinutes: number;
   headline: boolean;
   editorsPick: boolean;
-  breaking: boolean;
   status: 'draft' | 'published' | 'archived';
   publishedAt: Date;
   updatedAt?: Date;
+  updateNote?: string;
   tags: string[];
   sources: Source[];
   bodyHtml: string;
@@ -169,6 +169,11 @@ export function loadArticles(): LoadResult {
     const status = (['draft', 'published', 'archived'] as const).includes(data.status)
       ? (data.status as Article['status'])
       : 'draft';
+    const audioPath = data.audio ? String(data.audio).trim() : '';
+    const publicRoot = path.resolve('public');
+    const localAudio = audioPath.startsWith('/') ? path.resolve(publicRoot, '.' + audioPath) : '';
+    const audioExists = !localAudio || (localAudio.startsWith(publicRoot + path.sep) && fs.existsSync(localAudio));
+    if (audioPath && !audioExists) warnings.push(`${file}: ses dosyası bulunamadı, oynatıcı gizlendi`);
 
     out.push({
       file,
@@ -180,7 +185,7 @@ export function loadArticles(): LoadResult {
       spot: String(data.spot ?? '').trim(),
       section,
       cover: data.cover ? String(data.cover) : undefined,
-      audio: data.audio ? String(data.audio) : undefined,
+      audio: audioPath && audioExists ? audioPath : undefined,
       imageAlt: data.imageAlt ? String(data.imageAlt) : undefined,
       imageCaption: data.imageCaption ? String(data.imageCaption) : undefined,
       author: data.author ? String(data.author) : undefined,
@@ -188,10 +193,10 @@ export function loadArticles(): LoadResult {
       readMinutes: Number(data.readMinutes) > 0 ? Number(data.readMinutes) : Math.max(1, Math.round(words / 220)),
       headline: toBool(data.headline),
       editorsPick: toBool(data.editorsPick),
-      breaking: toBool(data.breaking),
       status,
       publishedAt,
       updatedAt: toDate(data.updatedAt),
+      updateNote: data.updateNote ? String(data.updateNote).trim() : undefined,
       tags: toTags(data.tags),
       sources,
       bodyHtml: articleMarkdown(sources.length, lang).parse(bodyText) as string,

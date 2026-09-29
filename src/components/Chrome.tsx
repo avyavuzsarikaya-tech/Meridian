@@ -72,9 +72,8 @@ export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath:
     <div className="relative z-50 border-b hairline-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
         <div className="flex items-center gap-3 font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))]">
-          <span className="hidden sm:inline" data-date={lang}>{fmtLongDate(now, lang)}</span>
-          <span className="hidden h-3 w-px bg-[hsl(var(--rule))] sm:inline-block" />
-          <span data-clock>{fmtClock(now)} GMT</span>
+          <span className="sm:hidden">{fmtShortDate(now, lang)} · GMT</span>
+          <span className="hidden sm:inline">{fmtLongDate(now, lang)} · GMT</span>
         </div>
         <nav aria-label={T[lang].languageSelection}>
           <details className="relative group">
@@ -124,14 +123,13 @@ export function Masthead({ lang, compact = false }: { lang: Lang; compact?: bool
           <ellipse cx="600" cy="240" rx="140" ry="300" />
         </g>
         <g fill="none" stroke="hsl(16 100% 48% / 0.35)" strokeWidth="1">
-          <ellipse className="meridian-arc" cx="600" cy="240" rx="540" ry="300" />
-          <ellipse className="meridian-arc" cx="600" cy="240" rx="220" ry="300" style={{ animationDelay: '-7s' }} />
+          <ellipse cx="600" cy="240" rx="540" ry="300" />
+          <ellipse cx="600" cy="240" rx="220" ry="300" />
         </g>
         <circle cx="600" cy="40" r="3.5" fill="hsl(16 100% 48%)" />
       </svg>
 
       <div className={`relative mx-auto max-w-7xl px-4 text-center sm:px-6 ${compact ? 'pb-4 pt-6 sm:pt-8' : 'pb-6 pt-10 sm:pt-14'}`}>
-        {!compact && <p className="kicker mb-3 text-[hsl(var(--muted))]">{t.masthead}</p>}
         <a href={url(home)} className="inline-block" aria-label={`Meridian — ${t.home}`}>
           <span
             className="block font-serif-display font-black uppercase leading-none tracking-tight text-[hsl(var(--ink))]"
@@ -140,51 +138,24 @@ export function Masthead({ lang, compact = false }: { lang: Lang; compact?: bool
             <Logo />
           </span>
         </a>
-        {!compact && (
-          <p className="mt-3 font-serif-display text-lg italic text-[hsl(var(--body))] sm:text-xl">{t.tagline}</p>
-        )}
       </div>
     </header>
   );
 }
 
-export function Ticker({ lang, items }: { lang: Lang; items: Article[] }) {
-  if (items.length === 0) return null;
-  const t = T[lang];
-  return (
-    <div className="border-y hairline-t hairline-b bg-[hsl(var(--ink))] text-[hsl(var(--cream))]" data-ticker>
-      <div className="mx-auto flex max-w-7xl items-stretch px-4 sm:px-6">
-        <div className="flex shrink-0 items-center gap-2 border-r border-[hsl(var(--cream)/0.2)] py-2.5 pr-4">
-          <span className="live-dot inline-block h-2 w-2 rounded-full bg-[hsl(var(--accent))]" />
-          <span className="kicker text-[hsl(var(--cream))]">{t.breaking}</span>
-        </div>
-        <ul className="ticker-list relative min-h-10 flex-1 overflow-hidden pl-4">
-          {items.map((a, i) => (
-            <li key={a.path} className="ticker-item" data-active={i === 0 ? 'true' : undefined}>
-              <a href={url(a.path)} className="flex h-10 items-center truncate font-mono-data text-[12px] tracking-wide hover:text-[hsl(var(--accent))]">
-                <span className="truncate">{a.title}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-export function NavBar({ lang, active }: { lang: Lang; active?: string }) {
+export function NavBar({ lang, active, sections }: { lang: Lang; active?: string; sections: typeof SECTIONS }) {
   const t = T[lang];
   return (
     <nav className="site-nav sticky top-0 z-40 border-b hairline-b bg-[hsl(var(--paper)/0.94)] backdrop-blur-sm" aria-label={t.sections}>
-      <div className="mx-auto flex max-w-7xl items-center px-4 sm:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:justify-start">
         <a
           href={url(homePath(lang))}
           className="kicker shrink-0 border-r border-[hsl(var(--rule))] py-1 pl-0 pr-4 text-[hsl(var(--ink))] transition-colors hover:text-[hsl(var(--accent))]"
         >
           {t.home}
         </a>
-        <div className="flex items-center gap-1 overflow-x-auto py-3 [scrollbar-width:none]">
-          {SECTIONS.map((s) => (
+        <div className="hidden items-center gap-1 py-3 md:flex">
+          {sections.map((s) => (
             <a
               key={s.slug}
               href={url(`/${lang}/section/${s.slug}/`)}
@@ -199,12 +170,27 @@ export function NavBar({ lang, active }: { lang: Lang; active?: string }) {
             </a>
           ))}
         </div>
+        <details className="relative py-2 md:hidden">
+          <summary className="kicker cursor-pointer list-none border border-[hsl(var(--rule))] px-3 py-2 text-[hsl(var(--ink))] [&::-webkit-details-marker]:hidden">
+            {t.sections} ▾
+          </summary>
+          <div className="absolute top-full z-50 min-w-44 border border-[hsl(var(--rule))] bg-[hsl(var(--paper))] p-2 shadow-lg" style={{ insetInlineEnd: 0 }}>
+            {sections.map((s) => (
+              <a key={s.slug} href={url(`/${lang}/section/${s.slug}/`)} aria-current={active === s.slug ? 'page' : undefined}
+                className="block px-3 py-2 text-sm text-[hsl(var(--body))] hover:bg-[hsl(var(--rule))]">{s[lang]}</a>
+            ))}
+            <div className="my-1 border-t border-[hsl(var(--rule))]" />
+            {(['about', 'principles', 'contact'] as const).map((page) => (
+              <a key={page} href={url(`/${lang}/${page}/`)} className="block px-3 py-2 text-sm text-[hsl(var(--body))] hover:bg-[hsl(var(--rule))]">{page === 'about' ? t.aboutPage : t[page]}</a>
+            ))}
+          </div>
+        </details>
       </div>
     </nav>
   );
 }
 
-export function Footer({ lang }: { lang: Lang }) {
+export function Footer({ lang, sections }: { lang: Lang; sections: typeof SECTIONS }) {
   const t = T[lang];
   const year = new Date().getUTCFullYear();
   return (
@@ -219,7 +205,7 @@ export function Footer({ lang }: { lang: Lang }) {
         <div>
           <p className="kicker mb-4 text-[hsl(var(--muted))]">{t.sections}</p>
           <ul className="grid grid-cols-2 gap-y-2">
-            {SECTIONS.map((s) => (
+            {sections.map((s) => (
               <li key={s.slug}>
                 <a href={url(`/${lang}/section/${s.slug}/`)} className="text-sm text-[hsl(var(--body))] transition-colors hover:text-[hsl(var(--accent))]">
                   {s[lang]}
@@ -232,7 +218,10 @@ export function Footer({ lang }: { lang: Lang }) {
       <div className="border-t hairline-t">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))] sm:flex-row sm:px-6">
           <span lang="en">© {year} Meridian</span>
-          <span className="flex items-center gap-4">
+          <span className="flex flex-wrap items-center justify-center gap-4">
+            {(['about', 'principles', 'contact'] as const).map((page) => (
+              <a key={page} href={url(`/${lang}/${page}/`)} className="hover:text-[hsl(var(--accent))]">{page === 'about' ? t.aboutPage : t[page]}</a>
+            ))}
             <a href={url(feedPath(lang))} className="hover:text-[hsl(var(--accent))]">{t.feed}</a>
             <span className="normal-case">{t.footerMotto}</span>
           </span>

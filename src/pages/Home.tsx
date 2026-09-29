@@ -1,23 +1,20 @@
 import { url } from '../config';
-import { T, sectionName, fmtClock, type Lang } from '../i18n';
+import { T, sectionName, type Lang } from '../i18n';
 import type { Article } from '../content';
 import { Byline, Cover } from '../components/Chrome';
 
-/** Ön sayfa: manşet, editör seçkisi, görselli haberler, son haberler. */
+/** Ön sayfa: tek manşet ve editörün işaretlediği seçki. */
 export function arrangeFront(list: Article[]) {
   const onFront = list.filter((a) => a.status === 'published');
   const lead = onFront.find((a) => a.headline) ?? onFront[0];
   const rest = onFront.filter((a) => a !== lead);
-  const picks = [...rest.filter((a) => a.editorsPick), ...rest.filter((a) => !a.editorsPick)].slice(0, 3);
-  const afterPicks = rest.filter((a) => !picks.includes(a));
-  const world = afterPicks.filter((a) => a.cover).slice(0, 3);
-  const latest = afterPicks.filter((a) => !world.includes(a)).slice(0, 9);
-  return { lead, picks, world, latest };
+  const picks = rest.filter((a) => a.editorsPick).slice(0, 3);
+  return { lead, picks };
 }
 
 export function Home({ lang, list }: { lang: Lang; list: Article[] }) {
   const t = T[lang];
-  const { lead, picks, world, latest } = arrangeFront(list);
+  const { lead, picks } = arrangeFront(list);
 
   if (!lead) {
     return (
@@ -72,10 +69,7 @@ export function Home({ lang, list }: { lang: Lang; list: Article[] }) {
                         <h3 className="font-serif-display text-xl font-semibold leading-snug text-balance">
                           <span className="headline-link">{a.title}</span>
                         </h3>
-                        <p className="mt-2 font-mono-data text-[11px] uppercase tracking-wider text-[hsl(var(--muted))]">
-                          {a.location ? `${a.location} — ` : ''}
-                          {fmtClock(a.publishedAt)} GMT · {a.readMinutes} {t.min}
-                        </p>
+                        <div className="mt-2"><Byline a={a} lang={lang} /></div>
                       </div>
                     </a>
                   </li>
@@ -86,47 +80,6 @@ export function Home({ lang, list }: { lang: Lang; list: Article[] }) {
         </div>
       </section>
 
-      {latest.length > 0 && (
-        <section className="border-y hairline-t hairline-b bg-[hsl(var(--cream))]">
-          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-            <div className="reveal flex items-baseline justify-between">
-              <h2 className="font-serif-display text-2xl font-bold tracking-tight">{t.latest}</h2>
-              <span className="kicker text-[hsl(var(--muted))]">{t.latestNote}</span>
-            </div>
-            <ol className="mt-6 grid gap-x-8 md:grid-cols-2 lg:grid-cols-3">
-              {latest.map((a, i) => (
-                <li key={a.path} className="reveal group border-t border-[hsl(var(--rule))] py-4" style={{ transitionDelay: `${i * 60}ms` }}>
-                  <a href={url(a.path)} className="flex gap-4">
-                    <time dateTime={a.publishedAt.toISOString()} className="font-mono-data text-[12px] font-semibold text-[hsl(var(--accent))]">
-                      {fmtClock(a.publishedAt)}
-                    </time>
-                    <div>
-                      <p className="font-serif-display text-[15px] font-medium leading-snug">
-                        <span className="headline-link">{a.title}</span>
-                      </p>
-                      <p className="kicker mt-1 text-[hsl(var(--muted))]">{sectionName(a.section, lang)}</p>
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-      )}
-
-      {world.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-          <div className="reveal flex items-center gap-4">
-            <h2 className="font-serif-display text-2xl font-bold tracking-tight">{t.around}</h2>
-            <div className="h-px flex-1 bg-[hsl(var(--rule))]" />
-          </div>
-          <div className="mt-8 grid gap-x-8 gap-y-12 md:grid-cols-3">
-            {world.map((a, i) => (
-              <Card key={a.path} a={a} lang={lang} delay={i * 100} />
-            ))}
-          </div>
-        </section>
-      )}
     </>
   );
 }

@@ -10,6 +10,9 @@ Bağımsız, küresel haber sitesi. Tasarım (gri zemin dahil) Kimi'nin Meridian
 - Türkçe, İngilizce, Arapça, Fransızca ve İspanyolca yayınlar ayrı adreslerde açılır. Arapça sağdan sola okunur.
 - Üstteki "Dil seçimi" kutusu aynı haberin başka dildeki sürümünü açar; çevirisi yoksa o dilin ön sayfasına gider.
 - Haber sayfasındaki `A− / A / A+` düğmeleri metin boyutunu değiştirir; tercih aynı tarayıcıda hatırlanır.
+- Ön sayfada tek manşet ve işaretlenen editör seçkisi görünür; diğer yazılar bölüm sayfalarında ve RSS'te bulunur. Boş bölümler menüde gösterilmez.
+- Yazılarda GMT yayın zamanı yer alır. Önemli bir metin değişikliğinde güncellenme zamanı ve kısa açıklama girilir.
+- Hakkında, ilkeler ve iletişim sayfaları her dilde bulunur. İletişim için şimdilik herkese açık GitHub kayıt bağlantısı kullanılır.
 
 ## Haber eklemek
 

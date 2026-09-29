@@ -159,33 +159,6 @@ a:focus-visible .headline-link {
   filter: saturate(1) contrast(1.04);
 }
 
-/* ---------- son dakika bandı ---------- */
-.ticker-list {
-  height: 2.5rem;
-}
-.ticker-item {
-  position: absolute;
-  inset: 0 0 auto 1rem;
-  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease-out;
-  transform: translateY(100%);
-  opacity: 0;
-}
-.ticker-item[data-active='true'] {
-  transform: translateY(0);
-  opacity: 1;
-}
-.ticker-item[data-leaving='true'] {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-@keyframes ticker-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-.live-dot {
-  animation: ticker-pulse 1.6s ease-in-out infinite;
-}
-
 /* ---------- kaydırınca beliren bloklar (yalnız JS açıkken) ---------- */
 .js .reveal {
   opacity: 0;
@@ -198,24 +171,6 @@ a:focus-visible .headline-link {
   transform: none;
 }
 
-/* ---------- logo arkasındaki meridyen yayları ---------- */
-@keyframes arc-drift {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -240; }
-}
-.meridian-arc {
-  stroke-dasharray: 4 8;
-  animation: arc-drift 14s linear infinite;
-}
-
-/* ---------- menü aşağı kaydırınca gizlenir ---------- */
-.site-nav {
-  transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
-.site-nav.nav-hidden {
-  transform: translateY(-100%);
-}
-
 .kicker {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 0.6875rem;
@@ -225,6 +180,5 @@ a:focus-visible .headline-link {
 
 @media (prefers-reduced-motion: reduce) {
   .js .reveal { opacity: 1; transform: none; transition: none; }
-  .news-img, .ticker-item, .site-nav, .headline-link { transition: none; }
-  .meridian-arc, .live-dot { animation: none; }
+  .news-img, .headline-link { transition: none; }
 }
