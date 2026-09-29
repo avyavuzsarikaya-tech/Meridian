@@ -77,16 +77,14 @@ export function TopBar({ lang, now, altPath }: { lang: Lang; now: Date; altPath:
         </div>
         <nav aria-label={T[lang].languageSelection}>
           <details className="relative group">
-            <summary className="flex cursor-pointer list-none items-center gap-2 border border-[hsl(var(--rule))] px-3 py-1.5 text-[11px] font-semibold text-[hsl(var(--body))] hover:border-[hsl(var(--ink))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>{T[lang].languageSelection}</span>
-              <span className="text-[hsl(var(--muted))]">· {LANGUAGE_NAMES[lang]}</span>
-              <span aria-hidden="true">▾</span>
+            <summary aria-label={T[lang].languageSelection} className="btn flex cursor-pointer list-none items-center gap-2 px-3 py-1.5 [&::-webkit-details-marker]:hidden">
+              <span dir="ltr">{lang.toUpperCase()} <span aria-hidden="true">▾</span></span>
             </summary>
-            <div className="absolute top-full z-50 mt-1 min-w-full border border-[hsl(var(--rule))] bg-[hsl(var(--paper))] p-1 shadow-lg" style={{ insetInlineEnd: 0 }}>
+            <div className="absolute top-full z-50 mt-1 min-w-full border border-[hsl(var(--muted))] bg-[hsl(var(--paper))] p-1 shadow-lg" style={{ insetInlineEnd: 0 }}>
               {LANGS.map((edition) => (
                 <a key={edition} href={url(altPath[edition])} hrefLang={edition} lang={edition}
                   aria-current={lang === edition ? 'page' : undefined}
-                  className={`block whitespace-nowrap px-3 py-2 text-sm transition-colors ${lang === edition ? 'bg-[hsl(var(--ink))] text-[hsl(var(--cream))]' : 'text-[hsl(var(--body))] hover:bg-[hsl(var(--rule))]'}`}
+                  className={`block whitespace-nowrap px-3 py-2 text-sm transition-colors ${lang === edition ? 'border-s-[3px] border-[hsl(var(--accent))] text-[hsl(var(--ink))]' : 'border-s-[3px] border-transparent text-[hsl(var(--body))] hover:bg-[hsl(var(--rule))]'}`}
                 >{LANGUAGE_NAMES[edition]}</a>
               ))}
             </div>
